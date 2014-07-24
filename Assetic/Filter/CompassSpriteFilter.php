@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-namespace ES\Bundle\FrontEndBundle\Assetic\Filter;
+namespace ES\Bundle\BaseBundle\Assetic\Filter;
 
 use Assetic\Asset\AssetInterface;
 use Assetic\Exception\FilterException;
 use Assetic\Factory\AssetFactory;
 use Assetic\Filter\BaseProcessFilter;
 use Assetic\Filter\DependencyExtractorInterface;
-use ES\FrontEndBundle\Util\Debug;
+use ES\BaseBundle\Util\Debug;
 
 /**
  * Loads Compass files.
