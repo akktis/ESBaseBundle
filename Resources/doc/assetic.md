@@ -15,7 +15,7 @@ assetic:
         compass_sprite:
             bin: %compass_bin_path%
             apply_to: "\.scss$"
-            resource: '%kernel.root_dir%/../vendor/es/frontend-bundle/ES/Bundle/BaseBundle/Resources/config/filters/compass_sprite.xml'
+            resource: '%kernel.root_dir%/../vendor/es/base-bundle/ES/Bundle/BaseBundle/Resources/config/filters/compass_sprite.xml'
 ```
 
 ## Usage
