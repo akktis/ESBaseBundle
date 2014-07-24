@@ -26,7 +26,7 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"ES\\Bundle\BaseBundle": ""
+			"ES\\Bundle\\BaseBundle": ""
 		}
 	},
 	"target-dir": "ES/Bundle/BaseBundle"
