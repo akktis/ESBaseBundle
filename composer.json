@@ -15,6 +15,7 @@
 		"php": ">=5.3.0",
 		"symfony/assetic-bundle": "~2.3",
 		"doctrine/doctrine-migrations-bundle": "dev-master",
+		"doctrine/migrations": "dev-master",
 		"twig/extensions": "~1.0",
 		"braincrafted/bootstrap-bundle": "~2.0",
 		"knplabs/knp-menu": "2.0.*@dev",
