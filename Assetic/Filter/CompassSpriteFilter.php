@@ -72,6 +72,7 @@ class CompassSpriteFilter extends BaseProcessFilter implements DependencyExtract
 	{
 		$path = $pathMask;
 		$path = preg_replace('#^\*#', $currentPath, $path);
+		$path = str_replace(DIRECTORY_SEPARATOR, '/', $path);
 		if (strpos($path, '{bundle}') !== false) {
 			if (!preg_match('#/([^/]+?)(?:/Bundle)?/([^/]+?)Bundle/?$#', $currentPath, $matches)) {
 				throw new \RuntimeException(sprintf('Can\'t get bundle name. Invalid format "%s"', $currentPath));

@@ -1,6 +1,4 @@
 
 # Base Bundle
 
-## Assetic
-
-...
+[Assetic with sprites](Resources/doc/assetic.md)
