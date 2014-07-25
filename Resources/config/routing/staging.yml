@@ -1,0 +1,6 @@
+es_cameleon_stagin_login:
+    pattern:  /staging/login
+    defaults: { _controller: ESBaseBundle:StagingSecurity:login }
+es_cameleon_stagin_login_check:
+    pattern:  /staging/login_check
+    defaults: { _controller: ESBaseBundle:StagingSecurity:loginCheck }

@@ -1,0 +1,29 @@
+{% extends 'ESBaseBundle:Security:layout.html.twig' %}
+
+{% block title %}{{ cameleon.project_title }} - Staging{% endblock %}
+
+
+{% trans_default_domain 'ESBaseBundle' %}
+
+{% block es_cameleon_content %}
+	<form class="form-signin" role="form" method="post" action="{{ path('es_base_stagin_login_check') }}">
+		<input type="hidden" name="_csrf_token" value="{{ csrf_token }}"/>
+
+		<h2 class="form-signin-heading">{{ invite }}</h2>
+		{% if ask_username %}
+			<input type="text" class="form-control" placeholder="Username" name="_username" value="{{ last_username }}"
+				   required autofocus>
+		{% else %}
+			<input type="hidden" name="_username" value="{{ default_username }}">
+		{% endif %}
+		<input type="password" class="form-control" name="_password" placeholder="Password"
+			   required{% if not ask_username %} autofocus{% endif %}>
+
+		{% if error %}
+			<div>{{ error|trans }}</div>
+		{% endif %}
+
+		<button class="btn btn-lg btn-primary btn-block" type="submit">Continue</button>
+	</form>
+
+{% endblock %}
