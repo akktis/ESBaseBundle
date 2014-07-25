@@ -1,0 +1,9 @@
+services:
+    es_base.twig.extension.google_analytics:
+        class: ES\Bundle\BaseBundle\Twig\Extension\GoogleAnalyticsExtension
+        arguments:
+            - @service_container
+            - %es_base.google_analytics.website_name%
+            - %es_base.google_analytics.trackers%
+        tags:
+            - { name: twig.extension }

@@ -20,9 +20,34 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root('es_base');
 
-        // Here you should define the parameters that are allowed to
-        // configure your bundle. See the documentation linked above for
-        // more information on that topic.
+		$rootNode
+			->children()
+				->scalarNode('host_env')
+					->defaultValue('%cameleon.host_env%')
+					->cannotBeEmpty()
+				->end()
+				->arrayNode('templating')
+					->addDefaultsIfNotSet()
+					->children()
+						->arrayNode('bootstrap')
+							->addDefaultsIfNotSet()
+							->children()
+								->scalarNode('use_cdn')->defaultTrue()->end()
+							->end()
+						->end()
+					->end()
+				->end()
+				->arrayNode('google_analytics')
+					->children()
+						->scalarNode('website_name')->defaultValue('%cameleon.project_name%')->end()
+						->arrayNode('trackers')
+						->example('main: UA-47067754-2')
+						->useAttributeAsKey('name')
+							->prototype('scalar')
+						->end()
+					->end()
+				->end()
+			->end();
 
         return $treeBuilder;
     }
