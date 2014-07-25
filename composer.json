@@ -29,6 +29,6 @@
 			"ES\\Bundle\\BaseBundle": ""
 		}
 	},
-	"bin": ["Resources/bin/update_composer_src", "bin/update_composer_src"],
+	"bin": ["Resources/bin/update_composer_src"],
 	"target-dir": "ES/Bundle/BaseBundle"
 }
