@@ -129,17 +129,16 @@ class ESFeatureContext extends MinkContext
 		$this->getSession()->wait(3000, "$('.modal:visible').children().length > 0");
 	}
 
-	/**
-	 * Ensure that any pending jquery Ajax request is not pending
-	 * @AfterStep
-	 */
-	public function afterStep(StepEvent $event)
-	{
-		$text = $event->getStep()->getText();
-		if (preg_match('/(select|fill|press)/i', $text)) {
-			$this->getSession()->wait(3000, '(0 === jQuery.active)');
-		}
-	}
+    /**
+     * Wait for all ajax request to finish
+     * can be called in a function with an AfterStep annotation
+     */
+    protected function waitForAjax() {
+        $text = $event->getStep()->getText();
+        if (preg_match('/(select|fill|press)/i', $text)) {
+            $this->getSession()->wait(3000, '(0 === jQuery.active)');
+        }
+    }
 
     /**
      * @When /^I take a ScreenShot "([^"]*)"$/
