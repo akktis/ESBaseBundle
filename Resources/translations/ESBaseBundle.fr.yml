@@ -1,0 +1,8 @@
+
+staging:
+    auth:
+        title: Accès staging
+    form:
+        username: Identifiant
+        password: Mot de passe
+        submit: Continuer

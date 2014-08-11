@@ -20,9 +20,9 @@
 		{% block stylesheet_bootstrap %}
 			<!-- Bootstrap -->
 			{% if not cameleon.bootstrap.use_cdn or app.debug %}
-				<link href="{{ asset('bundles/escameleon/css/bootstrap.min.css') }}" rel="stylesheet">
+				<link href="{{ asset('bundles/esbase/css/bootstrap.min.css') }}" rel="stylesheet">
 			{% else %}
-				<link href="//netdna.bootstrapcdn.com/bootstrap/3.2.2/css/bootstrap.min.css" rel="stylesheet">
+				<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
 			{% endif %}
 		{% endblock %}
 		{% for src in cameleon.cssIncludes %}
@@ -46,13 +46,13 @@
 {% block javascripts_bottom %}
 	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 	{% if not cameleon.bootstrap.use_cdn or app.debug %}
-	<script src="{{ asset('bundles/escameleon/js/jquery.min.js') }}"></script>
+	<script src="{{ asset('bundles/esbase/js/jquery.min.js') }}"></script>
 	{% else %}
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	{% endif %}
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 	{% if not cameleon.bootstrap.use_cdn or app.debug %}
-	<script src="{{ asset('bundles/escameleon/js/bootstrap.min.js') }}"></script>
+	<script src="{{ asset('bundles/esbase/js/bootstrap.min.js') }}"></script>
 	{% else %}
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.2/js/bootstrap.min.js"></script>
 	{% endif %}

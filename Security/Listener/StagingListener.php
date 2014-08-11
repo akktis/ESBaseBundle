@@ -37,7 +37,7 @@ class StagingListener
 		if ($this->httpUtils->checkRequestPath($request, $this->options['login_path'])) {
 			return;
 		}
-		if (preg_match('#/_wdt/#', $request->getRequestUri())) {
+		if (preg_match('#/(_wdt|_profiler)/#', $request->getRequestUri())) {
 			return;
 		}
 

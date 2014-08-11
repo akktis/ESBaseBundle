@@ -42,7 +42,7 @@ services:
         class: %security.authentication.success_handler.class%
         arguments:
             - @security.http_utils
-            - { login_path: /staging/login, check_path: /staging/login_check }
+            - { login_path: %es_base.security.login_path%, check_path: %es_base.security.login_check% }
     es_base.security.authentication.failure_handler:
         class: %security.authentication.failure_handler.class%
         arguments:

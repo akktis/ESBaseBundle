@@ -55,7 +55,7 @@ class ESBaseExtension extends Extension
 		if ($config['password']) {
 			$askUsername = false;
 			if (count($config['users']) > 0) {
-				throw new InvalidConfigurationException('You must either set "password" or define "users" in "es_cameleon.staging"');
+				throw new InvalidConfigurationException('You must not set "password" and "users" at the same time in "es_base.staging"');
 			}
 			if ($config['authtype'] === 'basic') {
 				throw new InvalidConfigurationException('Basic authentication does not support default username. You must provide the "users" node instead of the "password" one.');
@@ -66,6 +66,8 @@ class ESBaseExtension extends Extension
 					'roles'    => array('ROLE_STAGING')
 				)
 			);
+		} elseif (count($config['users']) === 0) {
+			throw new InvalidConfigurationException('You must either set "password" or define "users" in "es_base.staging"');
 		}
 
 		$authType = $config['authtype'];
