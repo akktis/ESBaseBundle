@@ -5,12 +5,14 @@
 
 namespace ES\Bundle\BaseBundle\Security\Listener;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\Security\Core\Authentication\AuthenticationManagerInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationCredentialsNotFoundException;
 use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\Security\Http\HttpUtils;
+use Symfony\Component\Security\Http\RememberMe\RememberMeServicesInterface;
 
 class StagingListener
 {
@@ -19,15 +21,17 @@ class StagingListener
 	private $authManager;
 	protected $httpUtils;
 	private $options;
+	private $rememberMeServices;
 
-	public function __construct(SecurityContextInterface $context, AuthenticationManagerInterface $authManager, HttpUtils $httpUtils, array $options = array())
+	public function __construct(SecurityContextInterface $context, AuthenticationManagerInterface $authManager, HttpUtils $httpUtils, RememberMeServicesInterface $rememberMeServices, array $options = array())
 	{
-		$this->context     = $context;
-		$this->authManager = $authManager;
-		$this->httpUtils   = $httpUtils;
-		$this->options     = array_merge(array(
-			'check_path' => '/login_check',
-			'login_path' => '/login',
+		$this->context            = $context;
+		$this->authManager        = $authManager;
+		$this->httpUtils          = $httpUtils;
+		$this->rememberMeServices = $rememberMeServices;
+		$this->options            = array_merge(array(
+			'check_path' => '/staging/login_check',
+			'login_path' => '/staging/login',
 		), $options);
 	}
 

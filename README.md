@@ -1,15 +1,9 @@
 
 # Base Bundle
 
-
-## Assetic
-
-[Assetic with sprites](Resources/doc/assetic.md)
+- [Assetic with sprites](Resources/doc/assetic.md)
+- [Staging configuration](Resources/doc/staging.md)
 
 ## Google analytics
-
-... TODO
-
-## Staging
 
 ... TODO

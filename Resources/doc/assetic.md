@@ -1,4 +1,3 @@
-
 # Assetic
 
 ## Configuration
