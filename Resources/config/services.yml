@@ -1,10 +1,13 @@
+parameters:
+    es_base.model_manager_name: null
+
 services:
     es_base.templating.assets.stack:
         class: ES\Bundle\BaseBundle\Assetic\AssetsStack
         arguments:
             - @service_container
 
-    es_base.twig.extension.cameleon:
+    es_base.twig.extension.base:
         public: false
         class: ES\Bundle\BaseBundle\Twig\Extension\BaseExtension
         arguments:

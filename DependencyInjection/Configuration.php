@@ -28,6 +28,7 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('es_base');
 
 		$supportedAuthTypes = array('form', 'basic');
+		$supportedDrivers = array('orm', 'mongodb');
 
 		$children = $rootNode
 			->children();
@@ -37,6 +38,15 @@ class Configuration implements ConfigurationInterface
 		}
 
 		$children
+				->scalarNode('db_driver')
+					->defaultValue('orm')
+                    ->validate()
+                        ->ifNotInArray($supportedDrivers)
+                        ->thenInvalid('The driver %s is not supported. Please choose one of '.json_encode($supportedDrivers))
+                    ->end()
+                    ->cannotBeOverwritten()
+                    ->cannotBeEmpty()
+                ->end()
 				->arrayNode('templating')
 					->addDefaultsIfNotSet()
 					->children()

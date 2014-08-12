@@ -49,7 +49,7 @@ class ESBaseExtension extends Extension
 			$container->setParameter('es_base.google_analytics.tracked_environments', $googleAnalytics['tracked_environments']);
 		}
 
-		$twigBaseExtension = $container->getDefinition('es_base.twig.extension.cameleon');
+		$twigBaseExtension = $container->getDefinition('es_base.twig.extension.base');
 		$twigBaseExtension->addMethodCall('setGlobal', array(
 			'google_analytics_enabled',
 			isset($config['google_analytics']),
