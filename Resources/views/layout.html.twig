@@ -15,24 +15,20 @@
 		<meta name="description" content="{% block meta_description %}{% endblock %}">
 	{% endblock %}
 
-
 	{% block stylesheets %}
 		{% block stylesheet_bootstrap %}
-			<!-- Bootstrap -->
 			{% if not cameleon.bootstrap.use_cdn or app.debug %}
 				<link href="{{ asset('bundles/esbase/css/bootstrap.min.css') }}" rel="stylesheet">
 			{% else %}
 				<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
 			{% endif %}
 		{% endblock %}
-		{% for src in cameleon.cssIncludes %}
+		{% for src in get_css_includes() %}
 			<link href="{{ src }}" rel="stylesheet">
 		{% endfor %}
 	{% endblock %}
 
 	{% block javascript_head %}
-		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 		<!--[if lt IE 9]>
 		<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
 		<script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
@@ -57,15 +53,15 @@
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.2/js/bootstrap.min.js"></script>
 	{% endif %}
 {% endblock %}
-{% for src in cameleon.javascriptBottom.includes %}
+{% for src in get_js_includes() %}
 	<script src="{{ src }}"></script>
 {% endfor %}
-{% for code in cameleon.javascriptBottom.code %}
+{% for code in get_js_code() %}
 	{{ code }}
 {% endfor %}
 {% block google_analytics %}
-	{% if not app.debug and cameleon.host_env == 'prod' %}
-		{{ es_google_analytics_code('main') }}
+	{% if cameleon.google_analytics_enabled %}
+		{% include 'ESBaseBundle:Helper:google_analytics.html.twig' %}
 	{% endif %}
 {% endblock %}
 </body>

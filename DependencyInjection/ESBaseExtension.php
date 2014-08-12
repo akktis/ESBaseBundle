@@ -18,26 +18,42 @@ use Symfony\Component\DependencyInjection\Loader;
  */
 class ESBaseExtension extends Extension
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function load(array $configs, ContainerBuilder $container)
-    {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
+	/**
+	 * {@inheritDoc}
+	 */
+	public function load(array $configs, ContainerBuilder $container)
+	{
+		$configuration = new Configuration();
+		$config        = $this->processConfiguration($configuration, $configs);
 
-        $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+		$loader->load('services.yml');
+
+		foreach ($configuration::$globals as $key) {
+			$container->setParameter('es_base.' . $key, $config[$key]);
+		}
 
 		if (isset($config['google_analytics'])) {
 			$googleAnalytics = $config['google_analytics'];
 			if (!$googleAnalytics['website_name']) {
 				throw new InvalidConfigurationException('You must configure the website_name at ' . $this->getAlias() . '.google_analytics');
 			}
+
+			if (count($googleAnalytics['trackers']) === 0) {
+				throw new InvalidConfigurationException('You must configure at least one tracker at ' . $this->getAlias() . '.google_analytics.trackers');
+			}
+
 			$loader->load('google_analytics.yml');
 			$container->setParameter('es_base.google_analytics.website_name', $googleAnalytics['website_name']);
 			$container->setParameter('es_base.google_analytics.trackers', $googleAnalytics['trackers']);
+			$container->setParameter('es_base.google_analytics.tracked_environments', $googleAnalytics['tracked_environments']);
 		}
+
+		$twigBaseExtension = $container->getDefinition('es_base.twig.extension.cameleon');
+		$twigBaseExtension->addMethodCall('setGlobal', array(
+			'google_analytics_enabled',
+			isset($config['google_analytics']),
+		));
 
 		$config['host_env'] = strpos($config['host_env'], '%') === 0 ?
 			$container->getParameter(substr($config['host_env'], 1, -1)) : $config['host_env'];
@@ -47,7 +63,7 @@ class ESBaseExtension extends Extension
 		}
 
 		$container->setParameter('es_base.templating.bootstrap.use_cdn', $config['templating']['bootstrap']['use_cdn']);
-    }
+	}
 
 	private function loadStaging($loader, ContainerBuilder $container, $config)
 	{

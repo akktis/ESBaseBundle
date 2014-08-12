@@ -12,6 +12,13 @@ use Symfony\Component\Config\Definition\ConfigurationInterface;
  */
 class Configuration implements ConfigurationInterface
 {
+	static public $globals = array(
+		'host_env',
+		'project_url',
+		'project_name',
+		'project_title',
+	);
+
     /**
      * {@inheritDoc}
      */
@@ -22,12 +29,14 @@ class Configuration implements ConfigurationInterface
 
 		$supportedAuthTypes = array('form', 'basic');
 
-		$rootNode
-			->children()
-				->scalarNode('host_env')
-					->defaultValue('%cameleon.host_env%')
-					->cannotBeEmpty()
-				->end()
+		$children = $rootNode
+			->children();
+
+		foreach (self::$globals as $key) {
+			$children->scalarNode($key)->defaultValue('%cameleon.' . $key . '%')->cannotBeEmpty()->end();
+		}
+
+		$children
 				->arrayNode('templating')
 					->addDefaultsIfNotSet()
 					->children()
@@ -47,6 +56,10 @@ class Configuration implements ConfigurationInterface
 							->useAttributeAsKey('name')
 							->prototype('scalar')
 							->end()
+						->end()
+						->arrayNode('tracked_environments')
+							->prototype('scalar')->end()
+							->defaultValue(array('prod'))
 						->end()
 					->end()
 				->end()
