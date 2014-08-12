@@ -26,3 +26,5 @@ If you need to enable GA in your staging environment, see below:
 ```
 
 `tracked_environments` is used to defined in which cameleon environments the data is sent to Google.
+
+[Return to index](index.md)
