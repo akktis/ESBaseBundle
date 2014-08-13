@@ -29,6 +29,8 @@ class ESBaseExtension extends Extension
 		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 		$loader->load('services.yml');
 
+		$container->setAlias('es_base.object_manager', $this->getDefaultObjectManagerService($config['db_driver']));
+
 		foreach ($configuration::$globals as $key) {
 			$container->setParameter('es_base.' . $key, $config[$key]);
 		}
@@ -63,6 +65,20 @@ class ESBaseExtension extends Extension
 		}
 
 		$container->setParameter('es_base.templating.bootstrap.use_cdn', $config['templating']['bootstrap']['use_cdn']);
+	}
+
+	private function getDefaultObjectManagerService($dbDriver)
+	{
+		switch ($dbDriver) {
+			case 'orm':
+				return 'doctrine.orm.entity_manager';
+				break;
+			case 'mongodb':
+				return 'doctrine.odm.mongodb.document_manager';
+				break;
+			default:
+				throw new \InvalidArgumentException(sprintf('Undefined DB driver "%s"', $dbDriver));
+		}
 	}
 
 	private function loadStaging($loader, ContainerBuilder $container, $config)

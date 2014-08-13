@@ -58,7 +58,7 @@ class GoogleAnalyticsExtension extends \Twig_Extension
 				implode('", "', array_keys($this->trackers))
 			));
 		}
-		return $this->container->get('templating')->render('ESBaseBundle:Helper:google_analytics_code.html.twig', array(
+		return $this->container->get('templating')->render('ESBaseBundle:GoogleAnalytics:code.html.twig', array(
 			'website_name' => $this->webSiteName,
 			'tracker'      => $this->trackers[$tracker],
 			'send'         => in_array($this->hostEnv, $this->trackedEnvironments)

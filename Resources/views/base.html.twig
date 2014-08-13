@@ -61,7 +61,7 @@
 {% endfor %}
 {% block google_analytics %}
 	{% if cameleon.google_analytics_enabled %}
-		{% include 'ESBaseBundle:Helper:google_analytics.html.twig' %}
+		{% include 'ESBaseBundle:GoogleAnalytics:main_tracker.html.twig' %}
 	{% endif %}
 {% endblock %}
 </body>

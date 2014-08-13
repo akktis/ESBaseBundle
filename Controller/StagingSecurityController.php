@@ -59,7 +59,7 @@ class StagingSecurityController extends ContainerAware
      */
     protected function renderLogin(array $data)
     {
-        return $this->container->get('templating')->renderResponse('ESBaseBundle:Security:staging/login.html.twig', $data);
+        return $this->container->get('templating')->renderResponse('ESBaseBundle:Staging:login.html.twig', $data);
     }
 
     public function checkAction()
