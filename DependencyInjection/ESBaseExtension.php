@@ -109,11 +109,11 @@ class ESBaseExtension extends Extension
 		$exceptionListener = $container->getDefinition('es_base.security.exception_listener');
 		$exceptionListener->replaceArgument(4, new Reference('es_base.security.entry_point.' . $authType));
 
-		$this->compileParameters($container, 'es_base.security.staging', $config);
+		$this->renameParameters($container, 'es_base.security.staging', $config);
 		$container->setParameter('es_base.security.staging.ask_username', $askUsername);
 	}
 
-	private function compileParameters(ContainerBuilder $container, $prefix, array $config)
+	private function renameParameters(ContainerBuilder $container, $prefix, array $config)
 	{
 		foreach ($config as $key => $value) {
 			$container->setParameter($prefix . '.' . $key, $value);
