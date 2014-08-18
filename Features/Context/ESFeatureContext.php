@@ -132,6 +132,7 @@ class ESFeatureContext extends MinkContext
     /**
      * Wait for all ajax request to finish
      * can be called in a function with an AfterStep annotation
+     * Warning: Will proceed when ajax request is over, but before the callback is called...
      * @param StepEvent stepEvent
      */
     protected function waitForAjax(StepEvent $event) {
@@ -139,6 +140,38 @@ class ESFeatureContext extends MinkContext
         if (preg_match('/(select|fill|press)/i', $text)) {
             $this->getSession()->wait(3000, '(0 === jQuery.active)');
         }
+    }
+
+    /**
+     * Wait for element to be enabled
+     * Usefull
+     * @param $locator
+     */
+    protected function waitForEnabled($locator) {
+        $object = $this->getSession()->getPage()->findField($locator);
+        $this->getSession()->wait(3000, "! $('#" . $object->getAttribute('id') . "').disabled");
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function fillField($field, $value)
+    {
+        // Add a wait for enabled
+        $this->waitForEnabled($field);
+
+        parent::fillField($field, $value);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function selectOption($select, $option)
+    {
+        // Add a wait for enabled
+        $this->waitForEnabled($select);
+
+        parent::selectOption($select, $option);
     }
 
     /**
