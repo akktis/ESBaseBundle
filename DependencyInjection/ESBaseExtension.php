@@ -29,6 +29,7 @@ class ESBaseExtension extends Extension
 		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 		$loader->load('services.yml');
 
+		$container->setParameter('es_base.db_driver', $config['db_driver']);
 		$container->setAlias('es_base.object_manager', $this->getDefaultObjectManagerService($config['db_driver']));
 
 		foreach ($configuration::$globals as $key) {
