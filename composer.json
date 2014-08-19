@@ -31,5 +31,10 @@
 		}
 	},
 	"bin": ["Resources/bin/update_composer_src"],
-	"target-dir": "ES/Bundle/BaseBundle"
+	"target-dir": "ES/Bundle/BaseBundle",
+	"extra": {
+		"branch-alias": {
+			"dev-master": "1.0.x-dev"
+		}
+	}
 }
