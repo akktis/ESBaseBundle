@@ -81,7 +81,7 @@ class ComposerBundleUpdater
 
 			$this->write(sprintf('<info>%s</info>: ', $package['name']));
 			if ($currentLockCommit !== $commitHash) {
-				$this->write(sprintf('<info>%s</info> changed to <info>%s</info>', $this->getCommitName($currentLockCommit), $this->getCommitName($commitHash)));
+				$this->write(sprintf('<info>%s</info> changed to <error>%s</error>', $this->getCommitName($currentLockCommit), $this->getCommitName($commitHash)));
 			} else {
 				$this->write('no changes');
 			}
