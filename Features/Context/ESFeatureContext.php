@@ -9,6 +9,7 @@ use Behat\Behat\Context\Step\Then;
 use Behat\Behat\Event\StepEvent;
 use Behat\MinkExtension\Context\MinkContext;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Symfony\Bundle\SecurityBundle\Tests\Functional\app\AppKernel;
 use Symfony\Component\HttpKernel\KernelInterface;
@@ -68,7 +69,7 @@ class ESFeatureContext extends MinkContext
 
     /**
      * Get doctrine manager
-     * @return ObjectManager
+     * @return EntityManager
      */
     protected function getManager()
 	{
@@ -77,49 +78,100 @@ class ESFeatureContext extends MinkContext
 
     /**
      * Serialize array content in Guerkin format
-     * @param array $array Key-value array
+     * @param array $map Key-value array
+     * @param \Closure $keyConv
      * @return string
      */
-    protected function arrayToStr($array)
+    protected function mapToStr($map, $keyConv = null)
     {
         $exp = "|";
 
-        $sorted_keys = array_keys($array);
+        // Sort keys
+        $sorted_keys = array_keys($map);
         sort($sorted_keys);
 
-        foreach($sorted_keys as $key) $exp .= " " . $key . " |";
+        // Convert and display keys
+        $str_keys = [];
+
+        foreach($sorted_keys as $key) {
+            $str = $keyConv == null ? $key : $keyConv($key);
+            $str_keys[$key] = $str;
+
+            $exp .= ' ' . $str . ' |';
+        }
 
         $exp .= "\n|";
 
-        foreach($sorted_keys as $key) $exp .= " " . $array[$key] . " |";
+        foreach($sorted_keys as $key) {
+            $val = $map[$key];
+
+            $exp .= ' ' . $val;
+
+            // Pad to match key size
+            for ($i = 0; $i < strlen($str_keys[$key]) - strlen($val); ++$i) $exp .= ' ';
+
+            $exp .= ' |';
+        }
+
+        return $exp;
+    }
+
+    /**
+     * Serialize array content in Guerkin format
+     * @param array $list Single-dimension array
+     * @param \Closure $keyConv
+     * @return string
+     */
+    protected function listToStr($list, $keyConv = null)
+    {
+        $exp = "|";
+
+        // Convert and display values
+        foreach($list as $value) {
+            $str = $keyConv == null ? $value : $keyConv($value);
+
+            $exp .= ' ' . $str . ' |';
+        }
 
         return $exp;
     }
 
 	/**
 	 * Convert Behat table to php associative array
+     * Merge lines 2 by 2
 	 * @param TableNode $table
 	 * @return array
 	 */
-    protected function convertTable(TableNode $table)
+    protected function tableToMap(TableNode $table)
 	{
 		$rows = $table->getRows();
 
-		if (count($rows) == 2) {
-			$result = array();
+        $result = [];
 
-			$keys = $rows[0];
-			$values = $table->getRow(1);
-
-			for ($i = 0; $i < sizeof($keys); ++$i) {
-				$result[$keys[$i]] = $values[$i];
-			}
-
-			return $result;
-		} else {
-			return null;
+        for ($l = 0; $l < count($rows) - 1; $l += 2) {
+            $combined = array_combine($rows[$l], $rows[$l + 1]);
+            $result = $result + $combined;
 		}
+
+        return $result;
 	}
+
+    /**
+     * Convert Behat table to php simple array
+     * Merge lines
+     * @param TableNode $table
+     * @return array
+     */
+    protected function tableToList(TableNode $table)
+    {
+        $result = [];
+
+        foreach($table->getRows() as $row) {
+            $result = array_merge($result, $row);
+        }
+
+        return $result;
+    }
 
 	/**
 	 * @Then /^I should see a popin$/
