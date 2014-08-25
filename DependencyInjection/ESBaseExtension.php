@@ -52,6 +52,12 @@ class ESBaseExtension extends Extension
 			$container->setParameter('es_base.google_analytics.tracked_environments', $googleAnalytics['tracked_environments']);
 		}
 
+		if (isset($config['mailer'])) {
+			$container->setParameter('es_base.mailer.sender_address', $config['mailer']['sender_address']);
+			$container->setParameter('es_base.mailer.sender_name', $config['mailer']['sender_name']);
+			$loader->load('mailer.yml');
+		}
+
 		$twigBaseExtension = $container->getDefinition('es_base.twig.extension.base');
 		$twigBaseExtension->addMethodCall('setGlobal', array(
 			'google_analytics_enabled',

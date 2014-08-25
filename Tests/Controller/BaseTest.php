@@ -37,6 +37,12 @@ abstract class BaseTest extends WebTestCase
 
 	protected function getData($dataClass, array $criteria)
 	{
-		return self::getEntityManager()->getRepository($dataClass)->findOneBy($criteria);
+		$repo   = self::getEntityManager()->getRepository($dataClass);
+		$entity = $repo->findOneBy($criteria);
+
+		$this->assertNotNull($entity, implode(',', $criteria));
+		$this->assertEquals($repo->getClassName(), get_class($entity));
+
+		return $entity;
 	}
 }
