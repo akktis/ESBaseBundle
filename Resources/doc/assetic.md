@@ -30,4 +30,9 @@ div.bg {
 }
 ```
 
+## Known issues
+
+If you run `assets:install` with the `--symlink` options, generated images (sprites) will be placedinto your Resources directory.
+You should run `assets:install` without the symlink option to prevent the sprite images from being added to your git repository.
+
 [Return to index](index.md)
