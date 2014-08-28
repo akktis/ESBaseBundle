@@ -23,3 +23,7 @@ class AppKernel extends Kernel
     }
 }
 ```
+
+## Translations
+
+see [JMSTranslationBundle documentation](http://jmsyst.com/bundles/JMSTranslationBundle/master/installation)
