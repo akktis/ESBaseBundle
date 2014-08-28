@@ -1,0 +1,9 @@
+
+staging:
+    auth:
+        title: Staging
+    form:
+        username: Login
+        password: Password
+        remember_me: Remember me
+        submit: Continue
