@@ -23,8 +23,7 @@
 		"white-october/pagerfanta-bundle": "*",
 		"liip/imagine-bundle": "1.0.*@dev",
 		"presta/sitemap-bundle": "1.3.*@dev",
-		"khepin/yaml-fixtures-bundle": "~0.8.1",
-		"jms/translation-bundle": "1.1.*@dev"
+		"khepin/yaml-fixtures-bundle": "~0.8.1"
 	},
 	"autoload": {
 		"psr-0": {
