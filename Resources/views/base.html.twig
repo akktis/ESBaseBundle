@@ -56,13 +56,13 @@
 {% for src in get_js_includes() %}
 	<script src="{{ src }}"></script>
 {% endfor %}
-{% for code in get_js_code() %}
-	{{ code }}
-{% endfor %}
+{{ get_js_code() }}
 {% block google_analytics %}
 	{% if cameleon.google_analytics_enabled %}
 		{% include 'ESBaseBundle:GoogleAnalytics:main_tracker.html.twig' %}
 	{% endif %}
+{% endblock %}
+{% block javascript_footer %}
 {% endblock %}
 </body>
 </html>

@@ -54,7 +54,12 @@ class BaseExtension extends \Twig_Extension
 			new \Twig_SimpleFunction('append_js_include', array($this->assetsStack, 'appendJavascriptInclude')),
 			new \Twig_SimpleFunction('append_css_include', array($this->assetsStack, 'appendCSSInclude')),
 			new \Twig_SimpleFunction('append_js_code', array($this->assetsStack, 'appendJavascriptCode')),
-			new \Twig_SimpleFunction('get_js_code', array($this->assetsStack, 'getJavascriptCode')),
+			new \Twig_SimpleFunction('get_js_code', array($this->assetsStack, 'getJavascriptCode'), array(
+				'is_safe' => array(
+					'html' => true,
+					'js' => true,
+				)
+			)),
 			new \Twig_SimpleFunction('get_js_includes', array($this->assetsStack, 'getJavascriptIncludes')),
 			new \Twig_SimpleFunction('get_css_includes', array($this->assetsStack, 'getCSSIncludes')),
 			new \Twig_SimpleFunction('now', array($this, 'now')),
