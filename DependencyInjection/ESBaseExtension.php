@@ -2,11 +2,13 @@
 
 namespace ES\Bundle\BaseBundle\DependencyInjection;
 
+use Braincrafted\Bundle\BootstrapBundle\DependencyInjection\BraincraftedBootstrapExtension;
 use ES\Bundle\BaseBundle\Security\Listener\StagingListener;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
@@ -16,7 +18,7 @@ use Symfony\Component\DependencyInjection\Loader;
  *
  * To learn more see {@link http://symfony.com/doc/current/cookbook/bundles/extension.html}
  */
-class ESBaseExtension extends Extension
+class ESBaseExtension extends Extension implements PrependExtensionInterface
 {
 	/**
 	 * {@inheritDoc}
@@ -28,6 +30,7 @@ class ESBaseExtension extends Extension
 
 		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 		$loader->load('services.yml');
+		$loader->load('form.yml');
 
 		$container->setParameter('es_base.db_driver', $config['db_driver']);
 		$container->setAlias('es_base.object_manager', $this->getDefaultObjectManagerService($config['db_driver']));
@@ -36,20 +39,14 @@ class ESBaseExtension extends Extension
 			$container->setParameter('es_base.' . $key, $config[$key]);
 		}
 
+		$objectRegistry = array(
+			'orm'     => 'doctrine',
+			'mongodb' => 'doctrine_mongodb',
+		);
+		$container->setAlias('es_base.manager_registry', $objectRegistry[$config['db_driver']]);
+
 		if (isset($config['google_analytics'])) {
-			$googleAnalytics = $config['google_analytics'];
-			if (!$googleAnalytics['website_name']) {
-				throw new InvalidConfigurationException('You must configure the website_name at ' . $this->getAlias() . '.google_analytics');
-			}
-
-			if (count($googleAnalytics['trackers']) === 0) {
-				throw new InvalidConfigurationException('You must configure at least one tracker at ' . $this->getAlias() . '.google_analytics.trackers');
-			}
-
-			$loader->load('google_analytics.yml');
-			$container->setParameter('es_base.google_analytics.website_name', $googleAnalytics['website_name']);
-			$container->setParameter('es_base.google_analytics.trackers', $googleAnalytics['trackers']);
-			$container->setParameter('es_base.google_analytics.tracked_environments', $googleAnalytics['tracked_environments']);
+			$this->loadGoogleAnalytics($loader, $container, $config);
 		}
 
 		if (isset($config['mailer'])) {
@@ -74,6 +71,26 @@ class ESBaseExtension extends Extension
 		$container->setParameter('es_base.templating.bootstrap.use_cdn', $config['templating']['bootstrap']['use_cdn']);
 	}
 
+	private function configureTwigBundle(ContainerBuilder $container, array $config, $braincraftedBootstrapBundle = false)
+	{
+		$formTemplates = array();
+		if ($braincraftedBootstrapBundle) {
+			$formTemplates[] = 'BraincraftedBootstrapBundle:Form:bootstrap.html.twig';
+		}
+		$formTemplates[] = $config['templating']['form'];
+
+		foreach (array_keys($container->getExtensions()) as $name) {
+			switch ($name) {
+				case 'twig':
+					$container->prependExtensionConfig(
+						$name,
+						array('form' => array('resources' => $formTemplates))
+					);
+					break;
+			}
+		}
+	}
+
 	private function getDefaultObjectManagerService($dbDriver)
 	{
 		switch ($dbDriver) {
@@ -88,7 +105,24 @@ class ESBaseExtension extends Extension
 		}
 	}
 
-	private function loadStaging($loader, ContainerBuilder $container, $config)
+	private function loadGoogleAnalytics($loader, ContainerBuilder $container, array $config)
+	{
+		$googleAnalytics = $config['google_analytics'];
+		if (!$googleAnalytics['website_name']) {
+			throw new InvalidConfigurationException('You must configure the website_name at ' . $this->getAlias() . '.google_analytics');
+		}
+
+		if (count($googleAnalytics['trackers']) === 0) {
+			throw new InvalidConfigurationException('You must configure at least one tracker at ' . $this->getAlias() . '.google_analytics.trackers');
+		}
+
+		$loader->load('google_analytics.yml');
+		$container->setParameter('es_base.google_analytics.website_name', $googleAnalytics['website_name']);
+		$container->setParameter('es_base.google_analytics.trackers', $googleAnalytics['trackers']);
+		$container->setParameter('es_base.google_analytics.tracked_environments', $googleAnalytics['tracked_environments']);
+	}
+
+	private function loadStaging($loader, ContainerBuilder $container, array $config)
 	{
 		$askUsername = true;
 		if ($config['password']) {
@@ -124,6 +158,21 @@ class ESBaseExtension extends Extension
 	{
 		foreach ($config as $key => $value) {
 			$container->setParameter($prefix . '.' . $key, $value);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function prepend(ContainerBuilder $container)
+	{
+		$bundles = $container->getParameter('kernel.bundles');
+
+		$configs = $container->getExtensionConfig($this->getAlias());
+		$config  = $this->processConfiguration(new Configuration(), $configs);
+
+		if (isset($bundles['TwigBundle'])) {
+			$this->configureTwigBundle($container, $config, isset($bundles['BraincraftedBootstrapBundle']));
 		}
 	}
 }

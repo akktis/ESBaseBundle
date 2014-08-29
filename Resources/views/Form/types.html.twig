@@ -1,0 +1,47 @@
+{% block es_select2_widget %}
+	{% spaceless %}
+		{% set style = style|default(bootstrap_get_style()) %}
+		{% set col_size = col_size|default(bootstrap_get_col_size()) %}
+
+		{% if simple_col is not defined and bootstrap_get_simple_col() %}
+			{% set simple_col = bootstrap_get_simple_col() %}
+		{% endif %}
+		{% if attr.simple_col is defined and attr.simple_col is not empty %}
+			{% set simple_col = attr.simple_col %}
+		{% endif %}
+		{% if attr.col_size is defined and attr.col_size is not empty %}
+			{% set col_size = attr.col_size %}
+		{% endif %}
+		{% if attr.style is defined and attr.style is not empty %}
+			{% set style = attr.style %}
+		{% endif %}
+
+		{% if simple_col is defined and simple_col %}
+			<div class="col-{{ col_size }}-{{ simple_col }}">
+		{% endif %}
+
+		{% set type = type|default('hidden') %}
+
+		{% if style == 'inline' and (attr.placeholder is not defined or attr.placeholder is empty) %}
+			{% if label is empty %}
+				{% set attr = attr|merge({ 'placeholder': name|humanize }) %}
+			{% else %}
+				{% set attr = attr|merge({ 'placeholder': label}) %}
+			{% endif %}
+		{% endif %}
+		{% set full_name = full_name|replace({'[]': ''}) %}
+
+		<input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}>
+
+		{% set script %}
+		<script>
+			var _select2_options_{{ id }} = {{ js|raw }};
+			Cameleon.form.select2.setup('{{ id }}', _select2_options_{{ id }});
+		</script>
+		{% endset %}
+		{{ append_js_code(script) }}
+		{% if simple_col is defined and simple_col %}
+			</div>
+		{% endif %}
+	{% endspaceless %}
+{% endblock %}

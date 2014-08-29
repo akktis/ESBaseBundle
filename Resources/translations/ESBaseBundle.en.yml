@@ -7,3 +7,9 @@ staging:
         password: Password
         remember_me: Remember me
         submit: Continue
+
+form:
+    select2:
+        placeholder: Type something...
+        label_no_matches: Aucun résultat
+        searching: Chargement ...

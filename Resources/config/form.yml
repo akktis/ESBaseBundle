@@ -1,0 +1,12 @@
+parameters:
+    es_base.form.select2.type.class: ES\Bundle\BaseBundle\Form\Type\Select2Type
+services:
+    es_base.form.select2.type:
+        class: %es_base.form.select2.type.class%
+        scope: request
+        arguments:
+            - @es_base.templating.assets.stack
+            - @templating.helper.assets
+            - @translator
+        tags:
+            - { name: form.type, alias: es_select2 }

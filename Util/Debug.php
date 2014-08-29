@@ -9,7 +9,7 @@ class Debug
 {
 	public static function debug($title, $var, $maxDepth = 2, $stripTags = true)
 	{
-		echo '<pre style="background: #CCC;margin-bottom:5px;">';
+		echo '<pre style="background:#CCC;margin-bottom:5px;">';
 		echo $title . '<br>';
 		echo static::dump($var, $maxDepth, $stripTags);
 		echo '</pre>';
