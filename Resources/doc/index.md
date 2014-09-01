@@ -27,3 +27,9 @@ class AppKernel extends Kernel
 ## Translations
 
 see [JMSTranslationBundle documentation](http://jmsyst.com/bundles/JMSTranslationBundle/master/installation)
+
+## TODO
+
+Handle Google Analytics tags shot by other bundles
+
+ex: ESUserBundle registration controller shoot a "register" tag for GA
