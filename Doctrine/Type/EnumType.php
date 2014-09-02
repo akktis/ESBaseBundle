@@ -7,6 +7,8 @@ use Doctrine\DBAL\Platforms\AbstractPlatform;
 
 abstract class EnumType extends Type
 {
+	const ENUM = 'enum';
+
 	/**
 	 * @return array
 	 */
