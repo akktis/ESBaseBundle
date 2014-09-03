@@ -34,7 +34,9 @@ class Select2TypeTest extends TypeTestCase
 		$container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
 		$assetStack   = $this->getMock('ES\Bundle\BaseBundle\Assetic\AssetsStack', null, array($container));
 		$assetsHelper = $this->getMock('Symfony\Component\Templating\Asset\PackageInterface');
-		$select2Type  = new Select2Type($assetStack, $assetsHelper);
+
+		$translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+		$select2Type  = new Select2Type($assetStack, $assetsHelper, $translator);
 
 		return $select2Type;
 	}

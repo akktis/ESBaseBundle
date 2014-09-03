@@ -2,12 +2,25 @@
 
 namespace ES\Bundle\BaseBundle\Tests\Controller;
 
+use Doctrine\Common\DataFixtures\Executor\MongoDBExecutor;
+use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
+use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
+use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
 use ES\Bundle\UserBundle\Model\User;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\BrowserKit\Cookie;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 abstract class BaseTest extends WebTestCase
 {
+	/**
+	 * @var array
+	 */
+	protected $fixtureGroups = array();
+
 	/**
 	 * @return EntityManager
 	 */
@@ -44,5 +57,68 @@ abstract class BaseTest extends WebTestCase
 		$this->assertEquals($repo->getClassName(), get_class($entity));
 
 		return $entity;
+	}
+
+	protected function logIn(UserInterface $user, array $roles = array('ROLE_USER'), $firewall = 'main', $client = null)
+	{
+		$session = self::getContainer()->get('session');
+
+		$token = new UsernamePasswordToken($user->getUsername(), null, $firewall, $roles);
+		$session->set('_security_' . $firewall, serialize($token));
+		$session->save();
+
+		if ($client) {
+			$cookie = new Cookie($session->getName(), $session->getId());
+			$this->client->getCookieJar()->set($cookie);
+		} else {
+			/** @var SecurityContextInterface $securityContext */
+			$securityContext = self::getContainer()->get('security.context');
+			$securityContext->setToken($token);
+			$token->setUser($user);
+		}
+	}
+
+	protected function setUp()
+	{
+		parent::setUp();
+
+		if (count($this->fixtureGroups) === 0) {
+			return;
+		}
+
+		$this->loadFixtures($this->fixtureGroups);
+	}
+
+	private function loadFixtures(array $groups)
+	{
+		$container = static::getContainer();
+		if ($container->has('doctrine')) {
+			$em     = $container->get('doctrine')->getManager();
+			$purger = new ORMPurger($em);
+			$em->getConnection()->executeQuery('SET foreign_key_checks = 0');
+			$purger->setPurgeMode(ORMPurger::PURGE_MODE_TRUNCATE);
+			$executor = new ORMExecutor($em, $purger);
+			$executor->execute(array());
+		}
+		if ($container->has('doctrine_mongodb')) {
+			$dm       = $container->get('doctrine_mongodb')->getManager();
+			$purger   = new MongoDBPurger($dm);
+			$executor = new MongoDBExecutor($dm, $purger);
+			$executor->execute(array());
+		}
+
+		$container->get('es_fixtures.loader.yaml')->load($this->fixtureGroups);
+	}
+
+	protected function tearDown()
+	{
+		parent::tearDown();
+
+		static::$kernel = null;
+
+		if (count($this->fixtureGroups) === 0) {
+			return;
+		}
+		$this->loadFixtures(array('default'));
 	}
 }
