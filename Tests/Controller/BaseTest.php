@@ -7,7 +7,9 @@ use Doctrine\Common\DataFixtures\Executor\ORMExecutor;
 use Doctrine\Common\DataFixtures\Purger\MongoDBPurger;
 use Doctrine\Common\DataFixtures\Purger\ORMPurger;
 use Doctrine\ORM\EntityManager;
+use ES\Bundle\BaseBundle\Tests\Utils;
 use ES\Bundle\UserBundle\Model\User;
+use Symfony\Bundle\FrameworkBundle\Client;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\BrowserKit\Cookie;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -48,6 +50,13 @@ abstract class BaseTest extends WebTestCase
 		return $this->getData($userClass, array('username' => $username));
 	}
 
+	protected function refresh(&$entity)
+	{
+		$em = self::getEntityManager();
+		$em->detach($entity);
+		$entity = $em->find(get_class($entity), $entity->getId());
+	}
+
 	protected function getData($dataClass, array $criteria)
 	{
 		$repo   = self::getEntityManager()->getRepository($dataClass);
@@ -59,22 +68,32 @@ abstract class BaseTest extends WebTestCase
 		return $entity;
 	}
 
-	protected function logIn(UserInterface $user, array $roles = array('ROLE_USER'), $firewall = 'main', $client = null)
+	protected function setStagingAccess(Client $client)
 	{
-		$session = self::getContainer()->get('session');
+		list($name, $value) = Utils::getStagingCookie();
+		$cookie = new Cookie($name, $value);
+		$client->getCookieJar()->set($cookie);
+	}
 
+	protected function logIn(UserInterface $user, Client $client = null, array $roles = array('ROLE_USER'), $firewall = 'main')
+	{
 		$token = new UsernamePasswordToken($user->getUsername(), null, $firewall, $roles);
-		$session->set('_security_' . $firewall, serialize($token));
-		$session->save();
+		$token->setUser($user);
 
 		if ($client) {
+			if (!$client->getContainer()) {
+				$client->getKernel()->boot();
+			}
+
+			$session = $client->getContainer()->get('session');
+			$session->set('_security_' . $firewall, serialize($token));
+			$session->save();
 			$cookie = new Cookie($session->getName(), $session->getId());
-			$this->client->getCookieJar()->set($cookie);
+			$client->getCookieJar()->set($cookie);
 		} else {
 			/** @var SecurityContextInterface $securityContext */
 			$securityContext = self::getContainer()->get('security.context');
 			$securityContext->setToken($token);
-			$token->setUser($user);
 		}
 	}
 
@@ -119,6 +138,7 @@ abstract class BaseTest extends WebTestCase
 		if (count($this->fixtureGroups) === 0) {
 			return;
 		}
-		$this->loadFixtures(array('default'));
+		// Necessary?
+		//$this->loadFixtures(array('default'));
 	}
 }
