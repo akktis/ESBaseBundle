@@ -54,6 +54,29 @@ you can add `deliver_to` option:
         deliver_to: contact@acmedemo.com
 ```
 
+All messages are persisted to the database but if you wish to receive contact messages by email,
+you can add `deliver_to` option:
+
+```yaml
+    contact:
+        deliver_to: contact@acmedemo.com
+```
+
+## Configure feedback:
+
+Today there is only the `uservoice` provider.
+
+```yaml
+# /app/config/config.yml
+
+es_base:
+    # ...
+    feedback:
+        options:
+            key: idhgfsdoiqsoidjsqd
+```
+
+
 ## Configure mailer:
 
 ```yaml
