@@ -1,0 +1,21 @@
+{% extends 'ESBaseBundle:Mail:base.html.twig' %}
+
+{% block subject -%}
+{{- 'email.contact_message.subject'|trans({
+	'%email%': message.email,
+	}, 'ESCameleonBundle') -}}
+{%- endblock %}
+
+{% block content_text %}
+{{ 'email.contact_message.content_text'|trans({
+	'%email%': message.email,
+	'%message%': message.message,
+	}, 'ESCameleonBundle') }}
+{% endblock %}
+
+{% block content_html %}
+{{ 'email.contact_message.content_html'|trans({
+	'%email%': message.email,
+	'%message%': message.message|nl2br,
+	}, 'ESCameleonBundle')|raw }}
+{% endblock %}

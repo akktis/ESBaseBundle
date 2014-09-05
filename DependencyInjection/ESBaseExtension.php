@@ -48,11 +48,13 @@ class ESBaseExtension extends Extension implements PrependExtensionInterface
 		if (isset($config['google_analytics'])) {
 			$this->loadGoogleAnalytics($loader, $container, $config);
 		}
-
 		if (isset($config['mailer'])) {
 			$container->setParameter('es_base.mailer.sender_address', $config['mailer']['sender_address']);
 			$container->setParameter('es_base.mailer.sender_name', $config['mailer']['sender_name']);
 			$loader->load('mailer.yml');
+		}
+		if (isset($config['contact'])) {
+			$this->loadContact($config['contact'], $container, $loader);
 		}
 
 		$twigBaseExtension = $container->getDefinition('es_base.twig.extension.base');
@@ -152,6 +154,15 @@ class ESBaseExtension extends Extension implements PrependExtensionInterface
 
 		$this->renameParameters($container, 'es_base.security.staging', $config);
 		$container->setParameter('es_base.security.staging.ask_username', $askUsername);
+	}
+
+	private function loadContact(array $config, ContainerBuilder $container, $loader)
+	{
+		$container->setParameter('es_base.contact.deliver_to', $config['deliver_to']);
+		$model = $config['model'];
+		$container->setParameter('es_base.model.contact_message.class', $model['contact_message_class']);
+		$container->setParameter('es_base.model.contact_message.table', $model['contact_message_table']);
+		$loader->load('contact.yml');
 	}
 
 	private function renameParameters(ContainerBuilder $container, $prefix, array $config)

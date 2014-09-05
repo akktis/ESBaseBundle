@@ -24,9 +24,39 @@ class AppKernel extends Kernel
 }
 ```
 
-## Translations
+## Configure mailer:
 
-see [JMSTranslationBundle documentation](http://jmsyst.com/bundles/JMSTranslationBundle/master/installation)
+
+```yaml
+# /app/config/config.yml
+
+es_base:
+    # ...
+    mailer:
+        sender_address: no-reply@acmedemo.com
+```
+
+## Configure contact:
+
+```yaml
+# /app/config/config.yml
+
+es_base:
+    # ...
+    contact:
+        deliver_to: contact@acmedemo.com
+```
+
+Message are persisted
+
+```yaml
+# /app/config/config.yml
+
+es_base:
+    # ...
+    mailer:
+        sender_address: no-reply@acmedemo.com
+```
 
 ## TODO
 
