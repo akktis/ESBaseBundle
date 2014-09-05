@@ -5,11 +5,8 @@ parameters:
 services:
     es_base.form.contact.type:
         class: %es_base.form.contact.type.class%
-        scope: request
         arguments:
             - %es_base.model.contact_message.class%
-            - @router
-            - @request
         tags:
             - { name: form.type, alias: es_contact_form }
 

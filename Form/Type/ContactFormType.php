@@ -15,33 +15,16 @@ class ContactFormType extends AbstractType
 {
 	private $class;
 
-	private $router;
-
-	private $request;
-
-	public function __construct($class, RouterInterface $router, Request $request)
+	public function __construct($class)
 	{
-		$this->class   = $class;
-		$this->router  = $router;
-		$this->request = $request;
+		$this->class = $class;
 	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->setAction($this->router->generate('es_cameleon_contact_form'));
-		$builder
-			->add('redirect_to', 'hidden', array(
-				'mapped' => false,
-				'data'   => $this->request->getRequestUri(),
-			));
-		$this->buildContactForm($builder, $options);
-	}
-
-	protected function buildContactForm(FormBuilderInterface $builder, array $options)
-	{
 		$builder
 			->add('email', null, array(
-				'label'              => 'form.contact.email',
+				'label'              => 'contact.form.email',
 				'translation_domain' => 'ESBaseBundle',
 				'data'               => $options['default_email'] ? $options['default_email'] : null,
 			))
@@ -49,11 +32,11 @@ class ContactFormType extends AbstractType
 				'attr'               => array(
 					'rows' => 6,
 				),
-				'label'              => 'form.contact.email',
+				'label'              => 'contact.form.message',
 				'translation_domain' => 'ESBaseBundle',
 			))
 			->add('submit', 'submit', array(
-				'label'              => 'form.contact.submit',
+				'label'              => 'contact.form.submit',
 				'translation_domain' => 'ESBaseBundle',
 			));
 	}

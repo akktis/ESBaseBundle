@@ -13,3 +13,22 @@ form:
         placeholder: Type something...
         label_no_matches: Aucun résultat
         searching: Chargement ...
+
+contact:
+    flashes:
+        message:
+            success: Your message has been sent!
+    form:
+        email: Email
+        message: Message
+        submit: Send
+    mail:
+        subject: "[%project_title%] Contact"
+        content_text: |
+            %message%
+            --
+            %email%
+        content_html: |
+            <p>%message%</p>
+            --<br>
+            %email%

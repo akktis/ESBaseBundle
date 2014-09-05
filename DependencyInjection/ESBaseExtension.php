@@ -56,6 +56,9 @@ class ESBaseExtension extends Extension implements PrependExtensionInterface
 		if (isset($config['contact'])) {
 			$this->loadContact($config['contact'], $container, $loader);
 		}
+		if (isset($config['feedback'])) {
+			$this->loadFeedback($config['feedback'], $container, $loader);
+		}
 
 		$twigBaseExtension = $container->getDefinition('es_base.twig.extension.base');
 		$twigBaseExtension->addMethodCall('setGlobal', array(
@@ -159,10 +162,24 @@ class ESBaseExtension extends Extension implements PrependExtensionInterface
 	private function loadContact(array $config, ContainerBuilder $container, $loader)
 	{
 		$container->setParameter('es_base.contact.deliver_to', $config['deliver_to']);
-		$model = $config['model'];
+		$model      = $config['model'];
+		$templating = $config['templating'];
+		$container->setParameter('es_base.contact.templating.mail', $templating['mail']);
+		$container->setParameter('es_base.contact.templating.form', $templating['form']);
 		$container->setParameter('es_base.model.contact_message.class', $model['contact_message_class']);
 		$container->setParameter('es_base.model.contact_message.table', $model['contact_message_table']);
 		$loader->load('contact.yml');
+	}
+
+	private function loadFeedback(array $config, ContainerBuilder $container, $loader)
+	{
+		$container->setParameter('es_base.feedback.options', $config['options']);
+
+		$loader->load('feedback.yml');
+
+		$container->setAlias('es_base.feedback.provider', 'es_base.feedback.' . $config['provider'] . '.provider');
+		$provider = $container->getDefinition('es_base.feedback.' . $config['provider'] . '.provider');
+		$provider->setAbstract(false);
 	}
 
 	private function renameParameters(ContainerBuilder $container, $prefix, array $config)

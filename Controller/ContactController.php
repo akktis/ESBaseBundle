@@ -23,32 +23,31 @@ class ContactController extends Controller
 			if ($form->isValid()) {
 				/** @var \ES\Bundle\BaseBundle\Model\ContactMessage $message */
 				$message = $form->getData();
-				$message->setUser($user);
+
+				if ($user) {
+					$message->setUser($user);
+				}
 
 				$em = $this->getDoctrine()->getManager();
 				$em->persist($message);
 				$em->flush();
 
 				$translator = $this->get('translator');
-				$this->get('session')->getFlashBag()->add('success', $translator->trans('flashes.contact.sent.success', array(), 'ESBaseBundle'));
+				$this->get('session')->getFlashBag()->add('success', $translator->trans('contact.flashes.message.success', array(), 'ESBaseBundle'));
 
-				if ($email = $this->container->getParameter('es_cameleon.contact.contact_email')) {
-					$this->container->get('es_cameleon.mailer')->send(
-						'ESBaseBundle:Mail:contact_message.html.twig',
+				if ($email = $this->container->getParameter('es_base.contact.deliver_to')) {
+					$this->container->get('es_base.mailer')->send(
+						$this->container->getParameter('es_base.contact.templating.mail'),
 						$email,
 						array('message' => $message),
 						$message->getEmail());
 				}
 
-				if (!($url = $form->get('redirect_to')->getData()) || !($user = $request->headers->get('referer'))) {
-					$url = $this->generateUrl('es_cameleon_contact_form');
-				}
-
-				return $this->redirect($url);
+				return $this->redirect($request->getRequestUri());
 			}
 		}
 
-		return $this->render($this->container->getParameter('es_cameleon.templates.contact.form'), array(
+		return $this->render($this->container->getParameter('es_base.contact.templating.form'), array(
 			'contact_form' => $form->createView(),
 		));
 	}
