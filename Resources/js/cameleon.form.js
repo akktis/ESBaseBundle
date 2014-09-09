@@ -92,19 +92,6 @@ Cameleon.form = {
 		Cameleon.modal.ajaxInit($btn, $modal, options);
 	},
 
-	magicsuggest: {
-		inputs: {},
-		setup: function (id, options) {
-			Cameleon.form.magicsuggest.inputs[id] = $('#' + id).magicSuggest(options);
-			if (options.routeName) {
-				Cameleon.form.magicsuggest.inputs[id].setData(options.routeName);
-			}
-		},
-		appendChoice: function (id, data) {
-			Cameleon.form.magicsuggest.inputs[id].addToSelection(data);
-		}
-	},
-
 	summerNote: {
 		setup: function (id, options) {
 			function sendFile(file, editor, $editable) {
@@ -144,15 +131,12 @@ Cameleon.form = {
 			var options = $.extend({
 				height: 300
 			}, options);
-
 			if (options.imageUploadUrl) {
 				options.onImageUpload =
 					function (files, editor, $editable) {
 						sendFile(files[0], editor, $editable);
 					};
 			}
-
-
 			$('#' + id).summernote(options);
 		}
 	},

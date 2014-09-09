@@ -13,6 +13,11 @@ form:
         placeholder: Type something...
         label_no_matches: Aucun résultat
         searching: Chargement ...
+    csrf:
+        invalid: Form has expired. Please submit again!
+    collection:
+        add: Add
+        delete: Remove
 
 contact:
     flashes:

@@ -35,8 +35,7 @@
 
 		<script>
 			$(document).ready(function () {
-				var _select2_options_{{ id }} = {{ js|raw }};
-				Cameleon.form.select2.setup('{{ id }}', _select2_options_{{ id }});
+				Cameleon.form.select2.setup('{{ id }}', {{ js|raw }});
 			});
 		</script>
 		{% if simple_col is defined and simple_col %}
@@ -44,3 +43,45 @@
 		{% endif %}
 	{% endspaceless %}
 {% endblock %}
+
+
+{% block collection_widget_row %}
+	{% spaceless %}
+		<div class="cameleon-collection-row">
+			{% if allow_delete %}
+				<a href="javascript:void(0)" class="btn btn-danger cameleon-collection-delete"><i
+							class="icon-remove"></i> {{ delete_label|trans({}, translation_domain) }}</a>
+			{% endif %}
+			{{ form_widget(child) }}
+			<hr>
+		</div>
+	{% endspaceless %}
+{% endblock %}
+
+{% block collection_widget %}
+	{% spaceless %}
+	<div id="{{ id }}-collection">
+		{% if prototype is defined %}
+			{% set child = prototype %}
+			{% set attr = attr|merge({'data-prototype': block('collection_widget_row'), 'data-prototype-name': prototype.vars.name, 'class': attr.class|default('') }) %}
+		{% endif %}
+		<div {{ block('widget_container_attributes') }}>
+			{% for child in form %}
+				{{ block('collection_widget_row') }}
+			{% endfor %}
+			{{ form_rest(form) }}
+
+			{% if allow_add %}
+				<div><a href="javascript:void(0)"
+						class="btn btn-default cameleon-collection-add">{{ add_label|trans({}, translation_domain) }}</a>
+				</div>
+			{% endif %}
+		</div>
+		{% endspaceless %}
+	</div>
+	<script>
+		$(document).ready(function () {
+			Cameleon.form.collection.setup('#{{ id }}-collection');
+		});
+	</script>
+{% endblock collection_widget %}

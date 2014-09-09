@@ -1,6 +1,19 @@
 parameters:
     es_base.form.select2.type.class: ES\Bundle\BaseBundle\Form\Type\Select2Type
+    es_base.form.form.extension.class: ES\Bundle\BaseBundle\Form\Extension\FormTypeExtension
+    es_base.form.collection.extension.class: ES\Bundle\BaseBundle\Form\Extension\CollectionTypeExtension
 services:
+
+    es_base.form.form.extension:
+        class: %es_base.form.form.extension.class%
+        tags:
+            - { name: form.type_extension, alias: form }
+
+    es_base.form.collection.extension:
+        class: %es_base.form.collection.extension.class%
+        tags:
+            - { name: form.type_extension, alias: collection }
+
     es_base.form.select2.type:
         class: %es_base.form.select2.type.class%
         scope: request

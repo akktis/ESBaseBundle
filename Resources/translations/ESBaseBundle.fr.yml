@@ -26,3 +26,7 @@ contact:
             <p>%message%</p>
             --<br>
             %email%
+
+form:
+    csrf:
+        invalid: Le formulaire a expiré. Veuillez le soumettre à nouveau.

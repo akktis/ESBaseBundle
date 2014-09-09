@@ -50,7 +50,7 @@ class Configuration implements ConfigurationInterface
 				->arrayNode('templating')
 					->addDefaultsIfNotSet()
 					->children()
-						->scalarNode('form')->defaultValue('ESBaseBundle:Form:types.html.twig')->end()
+						->scalarNode('form')->defaultValue('ESBaseBundle:Form:cameleon_theme.html.twig')->end()
 						->arrayNode('bootstrap')
 							->addDefaultsIfNotSet()
 							->children()
