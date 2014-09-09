@@ -33,13 +33,12 @@
 
 		<input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}>
 
-		{% set script %}
 		<script>
-			var _select2_options_{{ id }} = {{ js|raw }};
-			Cameleon.form.select2.setup('{{ id }}', _select2_options_{{ id }});
+			$(document).ready(function () {
+				var _select2_options_{{ id }} = {{ js|raw }};
+				Cameleon.form.select2.setup('{{ id }}', _select2_options_{{ id }});
+			});
 		</script>
-		{% endset %}
-		{{ append_js_code(script) }}
 		{% if simple_col is defined and simple_col %}
 			</div>
 		{% endif %}

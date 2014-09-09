@@ -2,6 +2,7 @@
 
 namespace ES\Bundle\BaseBundle\Form\Type;
 
+use ES\Bundle\BaseBundle\Util\Javascript;
 use ES\Bundle\BaseBundle\Assetic\AssetsStack;
 use ES\Bundle\BaseBundle\Form\DataTransformer\ArrayToStringTransformer;
 use Symfony\Component\Form\AbstractType;
@@ -47,41 +48,52 @@ class Select2Type extends AbstractType
 
 	public function finishView(FormView $view, FormInterface $form, array $options)
 	{
-		$this->assetsStack->appendJavascriptCode('');
-
 		$translator     = $this->translator;
 		$transDomain    = $options['translation_domain'];
 		$select2Options = array(
 			'maximumSelectionSize' => (int)$options['maximum_selection'],
 			'placeholder'          => $translator->trans($options['placeholder'], array(), $transDomain),
 			'label_searching'      => $translator->trans($options['label_searching'], array(), $transDomain),
-			'label_no_matches'     => $translator->trans($options['label_no_matches'], array(), $transDomain),
+			'formatNoMatches'      => 'function () {
+				return "' . $translator->trans($options['label_no_matches'], array(), $transDomain) . '";
+			}',
+			'formatResult'         => $options['format_result'],
+			'formatSelection'      => $options['format_selection'],
 		);
 
-		$js = json_encode($select2Options);
+		if ($options['url']) {
+			$select2Options['ajax'] = array(
+				'url'      => $options['url'],
+				'dataType' => 'json',
+				'results'  => 'function (data, page) {
+					return {results: data};
+				}',
+				'data'     => 'function (term, page) {
+					var data = {
+						query: term
+					};
+					return data;
+				}',
+			);
+		}
 
-		$view->vars['js'] = $js;
+		$view->vars['js'] = Javascript::encodeJS($select2Options);
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
-		$defaults = array(
+		$resolver->setDefaults(array(
 			'value_separator'   => ',',
 			'maximum_selection' => 1,
+			'url'               => null,
 			'placeholder'       => 'form.select2.placeholder',
 			'label_searching'   => 'form.select2.searching',
 			'label_no_matches'  => 'form.select2.no_matches',
-			'fields_mapping'    => array(
-				'name' => 'name',
-			),
 			'format_result'     => 'function (item){return item.name}',
 			'format_selection'  => function (Options $options) {
 					return $options['format_result'];
 				},
-			'renderer'          => null,
-		);
-
-		$resolver->setDefaults($defaults);
+		));
 	}
 
 	public function getParent()
