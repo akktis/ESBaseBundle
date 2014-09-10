@@ -246,14 +246,14 @@ Cameleon.form = {
 
 	collection: {
 		setup: function (subject) {
-			$(subject).on('click', '.cameleon-collection-add', function (event) {
+			$(subject).on('click', '> .cameleon-collection-add > .cameleon-collection-add-btn', function (event) {
 				event.preventDefault();
-				var container = $(this).closest('[data-prototype]');
+				var container = $(subject).children('.cameleon-collection-content');
 				var proto = container.attr('data-prototype');
 				var protoName = container.attr('data-prototype-name') || '__name__';
 				// Set field id
 				var idRegexp = new RegExp(container.attr('id') + '_' + protoName, 'g');
-				var count = (container.children().length - 1);
+				var count = (container.children().length);
 				proto = proto.replace(idRegexp, container.attr('id') + '_' + count);
 
 				// Set field name
@@ -261,7 +261,7 @@ Cameleon.form = {
 				var nameRegexp = new RegExp(parts[parts.length - 1] + '\\]\\[' + protoName, 'g');
 				proto = proto.replace(nameRegexp, parts[parts.length - 1] + '][' + count);
 				$(proto)
-					.insertBefore($(this).parent())
+					.appendTo(container)
 					.trigger('cameleon-admin-append-form-element')
 				;
 				$(document).trigger({
@@ -270,9 +270,7 @@ Cameleon.form = {
 					count: count,
 					containerId: container.attr('id')
 				});
-			});
-
-			$(subject).on('click', '.cameleon-collection-delete', function (event) {
+			}).on('click', '> .cameleon-collection-content > .cameleon-collection-row > .cameleon-collection-delete > .cameleon-collection-delete-btn', function (event) {
 				event.preventDefault();
 				$(document).trigger({type: 'cameleon-collection-item-pre-delete'});
 				$(this).closest('.cameleon-collection-row').remove();

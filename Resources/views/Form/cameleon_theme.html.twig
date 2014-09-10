@@ -48,11 +48,15 @@
 {% block collection_widget_row %}
 	{% spaceless %}
 		<div class="cameleon-collection-row">
-			{% if allow_delete %}
-				<a href="javascript:void(0)" class="btn btn-danger cameleon-collection-delete"><i
-							class="icon-remove"></i> {{ delete_label|trans({}, translation_domain) }}</a>
-			{% endif %}
 			{{ form_widget(child) }}
+			{% if allow_delete %}
+				<div class="cameleon-collection-delete">
+					<a href="javascript:void(0)" class="btn btn-danger cameleon-collection-delete-btn">
+						<i class="fa fa-remove"></i>
+						{{ delete_label|trans({}, translation_domain) }}
+					</a>
+				</div>
+			{% endif %}
 			<hr>
 		</div>
 	{% endspaceless %}
@@ -65,18 +69,22 @@
 			{% set child = prototype %}
 			{% set attr = attr|merge({'data-prototype': block('collection_widget_row'), 'data-prototype-name': prototype.vars.name, 'class': attr.class|default('') }) %}
 		{% endif %}
+		{% set attr = attr|merge({class:'cameleon-collection-content'}) %}
 		<div {{ block('widget_container_attributes') }}>
 			{% for child in form %}
 				{{ block('collection_widget_row') }}
 			{% endfor %}
 			{{ form_rest(form) }}
-
-			{% if allow_add %}
-				<div><a href="javascript:void(0)"
-						class="btn btn-default cameleon-collection-add">{{ add_label|trans({}, translation_domain) }}</a>
-				</div>
-			{% endif %}
 		</div>
+		{% if allow_add %}
+			<div class="cameleon-collection-add">
+				<a href="javascript:void(0)"
+				   class="btn btn-default cameleon-collection-add-btn">
+					<i class="fa fa-plus"></i>
+					{{ add_label|trans({}, translation_domain) }}
+				</a>
+			</div>
+		{% endif %}
 		{% endspaceless %}
 	</div>
 	<script>
