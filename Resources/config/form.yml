@@ -1,5 +1,6 @@
 parameters:
     es_base.form.select2.type.class: ES\Bundle\BaseBundle\Form\Type\Select2Type
+    es_base.form.select2_doctrine.type.class: ES\Bundle\BaseBundle\Form\Type\Select2DoctrineType
     es_base.form.form.extension.class: ES\Bundle\BaseBundle\Form\Extension\FormTypeExtension
     es_base.form.collection.extension.class: ES\Bundle\BaseBundle\Form\Extension\CollectionTypeExtension
 services:
@@ -23,3 +24,12 @@ services:
             - @translator
         tags:
             - { name: form.type, alias: es_select2 }
+
+    es_base.form.select2_doctrine.orm.type:
+        class: %es_base.form.select2_doctrine.type.class%
+        parent: es_base.form.select2.type
+        scope: request
+        arguments:
+            - entity
+        tags:
+            - { name: form.type, alias: es_select2_orm }

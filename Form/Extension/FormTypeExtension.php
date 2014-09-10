@@ -31,7 +31,6 @@ class FormTypeExtension extends AbstractTypeExtension
 	{
 		$resolver->setDefaults(array(
 		//	'is_prototype'       => null,
-			'translation_domain' => 'ESBaseBundle',
 			'csrf_message'       => 'form.csrf_token.invalid',
 		));
 	}

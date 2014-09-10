@@ -142,9 +142,7 @@ Cameleon.form = {
 	},
 
 	select2: {
-		inputs: {},
 		setup: function (id, options) {
-
 			var options = $.extend({
 				allowFreeEntries: false,
 				multiple: false,
@@ -161,9 +159,7 @@ Cameleon.form = {
 
 			if (options.allowFreeEntries) {
 				options.tags = [];
-				options.formatNoMatches = function () {
-					return '';
-				}
+				options.labelNoMatches = '';
 			}
 			if (options.url) {
 				options.ajax = {
@@ -196,10 +192,14 @@ Cameleon.form = {
 			if (!options.multiple) {
 				options.maximumSelectionSize = 1;
 			}
-			Cameleon.form.select2.inputs[id] = $('#' + id).select2(options);
+			$('#' + id).trigger({
+				type: 'select2-config',
+				options: options
+			});
+			$('#' + id).select2(options);
 		},
 		appendChoice: function (id, item, multiple) {
-			var $i = Cameleon.form.select2.inputs[id], data;
+			var $i = $('#' + id), data;
 			if (multiple) {
 				data = $i.select2('data');
 				if (!data) {
@@ -315,3 +315,12 @@ Cameleon.form = {
 		}
 	}
 };
+
+(function ($) {
+	$.fn.cameleonSelect2 = function (options) {
+		this.on('select2-config', function (e) {
+			$.extend(e.options, options);
+		});
+		return this;
+	};
+}(jQuery));

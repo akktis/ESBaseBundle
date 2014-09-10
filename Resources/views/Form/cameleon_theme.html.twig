@@ -44,6 +44,14 @@
 	{% endspaceless %}
 {% endblock %}
 
+{% block es_select2_orm_widget %}
+	{{- block('es_select2_widget') -}}
+{% endblock %}
+
+{% block es_select2_mongodb_widget %}
+	{{- block('es_select2_widget') -}}
+{% endblock %}
+
 
 {% block collection_widget_row %}
 	{% spaceless %}

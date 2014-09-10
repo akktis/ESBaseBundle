@@ -31,53 +31,81 @@ class Select2Type extends AbstractType
 	 */
 	private $translator;
 
+	static private $assetsIncluded = false;
+
 	public function __construct(AssetsStack $assetsStack, PackageInterface $assetsHelper, TranslatorInterface $translator)
 	{
 		$this->assetsStack  = $assetsStack;
 		$this->assetsHelper = $assetsHelper;
 		$this->translator   = $translator;
 
-		$this->assetsStack->appendCSSInclude($this->assetsHelper->getUrl('bundles/esbase/vendor/select2/select2.css'));
-		$this->assetsStack->appendJavascriptInclude($this->assetsHelper->getUrl('bundles/esbase/vendor/select2/select2.js'));
+		if (!self::$assetsIncluded) {
+			self::$assetsIncluded = true;
+			$this->assetsStack->appendCSSInclude($this->assetsHelper->getUrl('bundles/esbase/vendor/select2/select2.css'));
+			$this->assetsStack->appendJavascriptInclude($this->assetsHelper->getUrl('bundles/esbase/vendor/select2/select2.js'));
+		}
 	}
 
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
-		$builder->addModelTransformer(new ArrayToStringTransformer($options['value_separator']), true);
+		if ($options['multiple']) {
+			$builder->addModelTransformer(new ArrayToStringTransformer(), true);
+		}
 	}
 
 	public function finishView(FormView $view, FormInterface $form, array $options)
 	{
-		$translator     = $this->translator;
-		$transDomain    = $options['translation_domain'];
-		$select2Options = array(
+		$view->vars['js'] = Javascript::encodeJS($this->getJSOptions($options), true);
+	}
+
+	protected function getJSOptions(array $options)
+	{
+		$translator  = $this->translator;
+		$transDomain = $options['translation_domain'];
+
+		$jsOptions = array(
 			'maximumSelectionSize' => $options['maximum_selection'],
 			'placeholder'          => $translator->trans($options['placeholder'], array(), $transDomain),
 			'labelSearching'       => $translator->trans($options['label_searching'], array(), $transDomain),
 			'labelNoMatches'       => $translator->trans($options['label_no_matches'], array(), $transDomain),
 			'formatResult'         => $options['format_result'],
 			'formatSelection'      => $options['format_selection'],
-			'allowClear'           => true,
+			'allowClear'           => !$options['required'],
 			'multiple'             => $options['multiple'],
 			'url'                  => $options['url'],
-			'tokenSeparators'      => $options['value_separator'],
 		);
 
-		$view->vars['js'] = Javascript::encodeJS($select2Options);
+		if (!$options['url']) {
+			$jsOptions['data'] = array('results' => $options['values'], 'text' => 'name');
+		}
+
+		return $jsOptions;
 	}
 
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-			'value_separator'   => ',',
-			'maximum_selection' => null,
-			'url'               => null,
-			'multiple'          => false,
-			'placeholder'       => 'form.select2.placeholder',
-			'label_searching'   => 'form.select2.searching',
-			'label_no_matches'  => 'form.select2.no_matches',
-			'format_result'     => 'function (item){return item.name}',
-			'format_selection'  => function (Options $options) {
+			'choices'            => [],
+			'values'             => function (Options $options) {
+					$choices = [];
+					foreach ($options['choices'] as $k => $value) {
+						$choices[] = [
+							'id'   => $k,
+							'name' => $value,
+						];
+					}
+
+					return $choices;
+				},
+			'maximum_selection'  => null,
+			'url'                => null,
+			'multiple'           => false,
+			'translation_domain' => 'ESBaseBundle',
+			'placeholder'        => 'form.select2.placeholder',
+			'label_searching'    => 'form.select2.searching',
+			'label_no_matches'   => 'form.select2.no_matches',
+			'format_result'      => 'function (item){return item.name}',
+			'format_selection'   => function (Options $options) {
 					return $options['format_result'];
 				},
 		));

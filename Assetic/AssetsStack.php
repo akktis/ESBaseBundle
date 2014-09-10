@@ -39,7 +39,7 @@ class AssetsStack extends ContainerAware
 		}
 
 		if (isset($this->cssIncludes[$key])) {
-			throw new \RuntimeException(sprintf('CSS source with key "%s" has already be included.'));
+			throw new \RuntimeException(sprintf('CSS source with key "%s" has already be included.', $key));
 		}
 
 		$this->cssIncludes[$key] = $src;
