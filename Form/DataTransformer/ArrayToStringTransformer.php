@@ -59,7 +59,7 @@ class ArrayToStringTransformer implements DataTransformerInterface
 		if (is_array($string)) {
 			return $string;
 		}
-		if (!is_string($string)) {
+		if (null !== $string && !is_string($string)) {
 			throw new TransformationFailedException('Expected a string');
 		}
 

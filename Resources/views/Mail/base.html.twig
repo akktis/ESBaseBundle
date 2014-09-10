@@ -7,7 +7,9 @@
 	{%- endset -%}
 	{%- if _text_content -%}
 		{{ _text_content|raw }}
-		{% include 'ESBaseBundle:Mail:signature.txt.twig' %}
+		{% block text_signature %}
+			{% include 'ESBaseBundle:Mail:signature.txt.twig' %}
+		{%- endblock %}
 	{%- endif -%}
 {%- endblock %}
 
@@ -25,6 +27,8 @@
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 			<title>{% block title %}{% endblock %}</title>
+
+			{% block stylesheet_style %}
 			<style type="text/css">
 				#outlook a {
 					padding: 0;
@@ -121,6 +125,7 @@
 					}
 				}
 			</style>
+			{% endblock %}
 		</head>
 		<body>
 		{% block inner_body_html %}
@@ -128,7 +133,9 @@
 				<tr>
 					<td valign="top">
 						{{ _html_content }}
-						{% include 'ESBaseBundle:Mail:signature.html.twig' %}
+						{% block html_signature %}
+							{% include 'ESBaseBundle:Mail:signature.html.twig' %}
+						{%- endblock %}
 					</td>
 				</tr>
 			</table>

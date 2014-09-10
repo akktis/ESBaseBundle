@@ -146,9 +146,17 @@ Cameleon.form = {
 		setup: function (id, options) {
 
 			var options = $.extend({
-				allowFreeEntries: true,
-				multiple: true,
-				width: 200
+				allowFreeEntries: false,
+				multiple: false,
+				width: 200,
+				url: null,
+				labelSearching: 'Searching ...',
+				formatSearching: function () {
+					return options.labelSearching;
+				},
+				formatNoMatches: function () {
+					return options.labelNoMatches;
+				}
 			}, options);
 
 			if (options.allowFreeEntries) {
@@ -156,6 +164,34 @@ Cameleon.form = {
 				options.formatNoMatches = function () {
 					return '';
 				}
+			}
+			if (options.url) {
+				options.ajax = {
+					url: options.url,
+					dataType: 'json',
+					results: function (data, page) {
+						return {results: data};
+					},
+					data: function (term, page) {
+						var data = {
+							query: term
+						};
+						return data;
+					}
+				};
+				options.initSelection = function (element, callback) {
+					return $.ajax({
+						url: options.url,
+						dataType: "json",
+						data: {
+							id: element.val()
+						},
+						success: function (data) {
+							var d = options.multiple ? data : data[0];
+							callback(d);
+						}
+					});
+				};
 			}
 			if (!options.multiple) {
 				options.maximumSelectionSize = 1;
@@ -246,7 +282,7 @@ Cameleon.form = {
 
 	collection: {
 		setup: function (subject) {
-			$(subject).on('click', '> .cameleon-collection-add > .cameleon-collection-add-btn', function (event) {
+			$(subject).on('click', '> .cameleon-collection-add > .cameleon-collection-add-btn',function (event) {
 				event.preventDefault();
 				var container = $(subject).children('.cameleon-collection-content');
 				var proto = container.attr('data-prototype');
@@ -271,11 +307,11 @@ Cameleon.form = {
 					containerId: container.attr('id')
 				});
 			}).on('click', '> .cameleon-collection-content > .cameleon-collection-row > .cameleon-collection-delete > .cameleon-collection-delete-btn', function (event) {
-				event.preventDefault();
-				$(document).trigger({type: 'cameleon-collection-item-pre-delete'});
-				$(this).closest('.cameleon-collection-row').remove();
-				$(document).trigger({type: 'cameleon-collection-item-post-delete'});
-			});
+					event.preventDefault();
+					$(document).trigger({type: 'cameleon-collection-item-pre-delete'});
+					$(this).closest('.cameleon-collection-row').remove();
+					$(document).trigger({type: 'cameleon-collection-item-post-delete'});
+				});
 		}
 	}
 };

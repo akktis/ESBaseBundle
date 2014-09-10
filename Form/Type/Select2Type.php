@@ -51,31 +51,17 @@ class Select2Type extends AbstractType
 		$translator     = $this->translator;
 		$transDomain    = $options['translation_domain'];
 		$select2Options = array(
-			'maximumSelectionSize' => (int)$options['maximum_selection'],
+			'maximumSelectionSize' => $options['maximum_selection'],
 			'placeholder'          => $translator->trans($options['placeholder'], array(), $transDomain),
-			'label_searching'      => $translator->trans($options['label_searching'], array(), $transDomain),
-			'formatNoMatches'      => 'function () {
-				return "' . $translator->trans($options['label_no_matches'], array(), $transDomain) . '";
-			}',
+			'labelSearching'       => $translator->trans($options['label_searching'], array(), $transDomain),
+			'labelNoMatches'       => $translator->trans($options['label_no_matches'], array(), $transDomain),
 			'formatResult'         => $options['format_result'],
 			'formatSelection'      => $options['format_selection'],
+			'allowClear'           => true,
+			'multiple'             => $options['multiple'],
+			'url'                  => $options['url'],
+			'tokenSeparators'      => $options['value_separator'],
 		);
-
-		if ($options['url']) {
-			$select2Options['ajax'] = array(
-				'url'      => $options['url'],
-				'dataType' => 'json',
-				'results'  => 'function (data, page) {
-					return {results: data};
-				}',
-				'data'     => 'function (term, page) {
-					var data = {
-						query: term
-					};
-					return data;
-				}',
-			);
-		}
 
 		$view->vars['js'] = Javascript::encodeJS($select2Options);
 	}
@@ -84,8 +70,9 @@ class Select2Type extends AbstractType
 	{
 		$resolver->setDefaults(array(
 			'value_separator'   => ',',
-			'maximum_selection' => 1,
+			'maximum_selection' => null,
 			'url'               => null,
+			'multiple'          => false,
 			'placeholder'       => 'form.select2.placeholder',
 			'label_searching'   => 'form.select2.searching',
 			'label_no_matches'  => 'form.select2.no_matches',
