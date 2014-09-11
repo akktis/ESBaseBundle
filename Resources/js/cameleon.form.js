@@ -143,24 +143,22 @@ Cameleon.form = {
 
 	select2: {
 		setup: function (id, options) {
-			var options = $.extend({
-				allowFreeEntries: false,
-				multiple: false,
-				width: 200,
-				url: null,
-				labelSearching: 'Searching ...',
-				formatSearching: function () {
-					return options.labelSearching;
-				},
-				formatNoMatches: function () {
-					return options.labelNoMatches;
-				}
-			}, options);
-
 			if (options.allowFreeEntries) {
 				options.tags = [];
 				options.labelNoMatches = '';
+				if (options.selectOnBlur === undefined) {
+					options.selectOnBlur = true;
+				}
 				delete options.data;
+				if (options.url) {
+					options.createSearchChoice = function (term, data) {
+						if ($(data).filter(function () {
+							return this.text.localeCompare(term) === 0;
+						}).length === 0) {
+							return {id: term, text: term};
+						}
+					};
+				}
 			}
 			if (options.url) {
 				options.ajax = {
@@ -193,6 +191,22 @@ Cameleon.form = {
 			if (!options.multiple) {
 				options.maximumSelectionSize = 1;
 			}
+
+			var options = $.extend({
+				allowFreeEntries: false,
+				multiple: false,
+				width: 200,
+				url: null,
+				selectOnBlur: false,
+				labelSearching: 'Searching ...',
+				formatSearching: function () {
+					return options.labelSearching;
+				},
+				formatNoMatches: function () {
+					return options.labelNoMatches;
+				}
+			}, options);
+
 			$('#' + id).trigger({
 				type: 'select2-config',
 				options: options
@@ -250,15 +264,49 @@ Cameleon.form = {
 				street_number: 'short_name',
 				route: 'long_name',
 				locality: 'long_name',
-				administrative_area_level_2: 'short_name',
 				administrative_area_level_1: 'short_name',
+				administrative_area_level_2: 'short_name',
 				country: 'short_name',
 				postal_code: 'short_name'
 			}, input = document.getElementById(field_id + '_formatted_address'), autocomplete;
 
+			(function (input) {
+				// Select first choice on enter keydown
+				// See http://stackoverflow.com/a/11703018/1895532
+				var addListener = (input.addEventListener) ? input.addEventListener : input.attachEvent;
+
+				function listener(type, listener) {
+					if (type == "keydown") {
+						var orig_listener = listener;
+						listener = function (event) {
+							var suggestion_selected = $(".pac-item-selected").length > 0;
+							if (event.which == 13) {
+								event.preventDefault();
+								if (!suggestion_selected) {
+									var simulated_downarrow = $.Event("keydown", {keyCode: 40, which: 40})
+									orig_listener.apply(input, [simulated_downarrow]);
+								}
+							}
+
+							orig_listener.apply(input, [event]);
+						};
+					}
+					addListener.apply(input, [type, listener]);
+				}
+
+				if (input.addEventListener)
+					input.addEventListener = listener;
+				else if (input.attachEvent)
+					input.attachEvent = listener;
+			})(input);
+
 			function fill() {
 				var place = autocomplete.getPlace(),
 					$c = $('#' + field_id);
+				console.log(place);
+				if (!place.geometry) {
+					return;
+				}
 				$c.find(':input').val('');
 				$c.find('#' + field_id + '_latitude').val(place.geometry.location.lat());
 				$c.find('#' + field_id + '_longitude').val(place.geometry.location.lng());

@@ -34,7 +34,7 @@
 		<input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}>
 
 		<script>
-			$(document).ready(function () {
+			$(function () {
 				Cameleon.form.select2.setup('{{ id }}', {{ js|raw }});
 			});
 		</script>
@@ -52,6 +52,16 @@
 	{{- block('es_select2_widget') -}}
 {% endblock %}
 
+{% block es_gmap_autocomplete_widget %}
+	<div id="{{ id }}">
+		{{ block('form_widget') }}
+	</div>
+	<script>
+		$(function () {
+			Cameleon.form.gmapAutoComplete.setup('{{ id }}');
+		});
+	</script>
+{% endblock %}
 
 {% block collection_widget_row %}
 	{% spaceless %}
@@ -61,7 +71,7 @@
 				<div class="cameleon-collection-delete">
 					<a href="javascript:void(0)" class="btn btn-danger cameleon-collection-delete-btn">
 						<i class="fa fa-remove"></i>
-						{{ delete_label|trans({}, translation_domain) }}
+						{{ delete_label|trans({}, 'ESBaseBundle') }}
 					</a>
 				</div>
 			{% endif %}
@@ -89,14 +99,14 @@
 				<a href="javascript:void(0)"
 				   class="btn btn-default cameleon-collection-add-btn">
 					<i class="fa fa-plus"></i>
-					{{ add_label|trans({}, translation_domain) }}
+					{{ add_label|trans({}, 'ESBaseBundle') }}
 				</a>
 			</div>
 		{% endif %}
 		{% endspaceless %}
 	</div>
 	<script>
-		$(document).ready(function () {
+		$(function () {
 			Cameleon.form.collection.setup('#{{ id }}-collection');
 		});
 	</script>

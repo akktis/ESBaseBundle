@@ -49,7 +49,7 @@ class Select2Type extends AbstractType
 	public function buildForm(FormBuilderInterface $builder, array $options)
 	{
 		if ($options['multiple']) {
-			$builder->addModelTransformer(new ArrayToStringTransformer(), true);
+			$builder->addViewTransformer(new ArrayToStringTransformer());
 		}
 	}
 
@@ -61,7 +61,7 @@ class Select2Type extends AbstractType
 	protected function getJSOptions(array $options)
 	{
 		$translator  = $this->translator;
-		$transDomain = $options['translation_domain'];
+		$transDomain = $options['select2_translation_domain'];
 
 		$jsOptions = array(
 			'maximumSelectionSize' => $options['maximum_selection'],
@@ -86,8 +86,8 @@ class Select2Type extends AbstractType
 	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
 		$resolver->setDefaults(array(
-			'choices'            => [],
-			'values'             => function (Options $options) {
+			'choices'                    => [],
+			'values'                     => function (Options $options) {
 					$choices = [];
 					if (is_array($options['choices'])) {
 						foreach ($options['choices'] as $k => $value) {
@@ -100,16 +100,16 @@ class Select2Type extends AbstractType
 
 					return $choices;
 				},
-			'maximum_selection'  => null,
-			'url'                => null,
-			'multiple'           => false,
-			'free_entries'       => false,
-			'translation_domain' => 'ESBaseBundle',
-			'placeholder'        => 'form.select2.placeholder',
-			'label_searching'    => 'form.select2.searching',
-			'label_no_matches'   => 'form.select2.no_matches',
-			'format_result'      => 'function (item){return item.text}',
-			'format_selection'   => function (Options $options) {
+			'maximum_selection'          => null,
+			'url'                        => null,
+			'multiple'                   => false,
+			'free_entries'               => false,
+			'select2_translation_domain' => 'ESBaseBundle',
+			'placeholder'                => 'form.select2.placeholder',
+			'label_searching'            => 'form.select2.searching',
+			'label_no_matches'           => 'form.select2.no_matches',
+			'format_result'              => 'function (item){return item.text}',
+			'format_selection'           => function (Options $options) {
 					return $options['format_result'];
 				},
 		));

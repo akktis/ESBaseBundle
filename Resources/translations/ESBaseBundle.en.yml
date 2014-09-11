@@ -11,13 +11,17 @@ staging:
 form:
     select2:
         placeholder: Type something...
-        label_no_matches: Aucun résultat
-        searching: Chargement ...
+        no_matches: No result
+        searching: Loading ...
     csrf:
         invalid: Form has expired. Please submit again!
     collection:
         add: Add
         delete: Remove
+
+    gmap:
+        autocomplete:
+            placeholder: Enter a location ...
 
 contact:
     flashes:

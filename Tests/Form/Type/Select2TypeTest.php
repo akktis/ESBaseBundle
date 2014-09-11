@@ -16,13 +16,26 @@ use Symfony\Component\Form\Test\TypeTestCase;
 
 class Select2TypeTest extends TypeTestCase
 {
-	public function testDataTransformation()
+	public function testSelect2Basic()
 	{
 		$form = $this->factory->create($this->createSelect2Type(), null, array());
 
-		$form->setData(array('foo@bar.com'));
+		$form->setData('foo@bar.com');
 		$form->submit('foo@bar.com,bar@bar.com');
 
+		$view = $form->createView();
+		$this->assertEquals('foo@bar.com,bar@bar.com', $view->vars['value']);
+		$this->assertEquals('foo@bar.com,bar@bar.com', $form->getData());
+	}
+
+	public function testSelect2Multiple()
+	{
+		$form = $this->factory->create($this->createSelect2Type(), null, array(
+			'multiple' =>  true,
+		));
+
+		$form->setData(array('foo@bar.com'));
+		$form->submit('foo@bar.com,bar@bar.com');
 		$view = $form->createView();
 		$this->assertEquals('foo@bar.com,bar@bar.com', $view->vars['value']);
 
