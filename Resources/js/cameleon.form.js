@@ -160,6 +160,7 @@ Cameleon.form = {
 			if (options.allowFreeEntries) {
 				options.tags = [];
 				options.labelNoMatches = '';
+				delete options.data;
 			}
 			if (options.url) {
 				options.ajax = {

@@ -73,6 +73,7 @@ class Select2Type extends AbstractType
 			'allowClear'           => !$options['required'],
 			'multiple'             => $options['multiple'],
 			'url'                  => $options['url'],
+			'allowFreeEntries'     => $options['free_entries'],
 		);
 
 		if (!$options['url']) {
@@ -92,7 +93,7 @@ class Select2Type extends AbstractType
 						foreach ($options['choices'] as $k => $value) {
 							$choices[] = [
 								'id'   => $k,
-								'name' => $value,
+								'text' => $value,
 							];
 						}
 					}
@@ -102,11 +103,12 @@ class Select2Type extends AbstractType
 			'maximum_selection'  => null,
 			'url'                => null,
 			'multiple'           => false,
+			'free_entries'       => false,
 			'translation_domain' => 'ESBaseBundle',
 			'placeholder'        => 'form.select2.placeholder',
 			'label_searching'    => 'form.select2.searching',
 			'label_no_matches'   => 'form.select2.no_matches',
-			'format_result'      => 'function (item){return item.name}',
+			'format_result'      => 'function (item){return item.text}',
 			'format_selection'   => function (Options $options) {
 					return $options['format_result'];
 				},
