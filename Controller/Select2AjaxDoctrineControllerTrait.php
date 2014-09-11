@@ -10,13 +10,17 @@ trait Select2AjaxDoctrineControllerTrait
 	{
 		$request = $this->get('request');
 		$query   = $request->query->get('query');
+		$id      = $request->query->get('id');
 
 		$repo         = $this->get('doctrine')->getRepository($class);
 		$queryBuilder = $repo->createQueryBuilder('t');
-		if (count($fields) > 0) {
+		if ($id) {
+			$queryBuilder->andWhere('t.id IN (:id)')
+				->setParameter('id', explode(',', $id));
+		} elseif (count($fields) > 0) {
 			foreach ($fields as $field) {
-				$queryBuilder->andWhere('t.' . $field . ' LIKE :' . $field)
-					->setParameter($field, '%' . str_replace(' ', '%', $query));
+				$queryBuilder->orWhere('t.' . $field . ' LIKE :' . $field)
+					->setParameter($field, '%' . str_replace(' ', '%', $query) . '%');
 			}
 		}
 		if (null !== $queryFilter) {

@@ -88,11 +88,13 @@ class Select2Type extends AbstractType
 			'choices'            => [],
 			'values'             => function (Options $options) {
 					$choices = [];
-					foreach ($options['choices'] as $k => $value) {
-						$choices[] = [
-							'id'   => $k,
-							'name' => $value,
-						];
+					if (is_array($options['choices'])) {
+						foreach ($options['choices'] as $k => $value) {
+							$choices[] = [
+								'id'   => $k,
+								'name' => $value,
+							];
+						}
 					}
 
 					return $choices;

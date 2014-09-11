@@ -35,10 +35,21 @@
 		<![endif]-->
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
 		{% if not cameleon.bootstrap.use_cdn or app.debug %}
-			<script src="{{ asset('bundles/esbase/js/jquery.min.js') }}"></script>
+		<script src="{{ asset('bundles/esbase/js/jquery.min.js') }}"></script>
 		{% else %}
-			<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		{% endif %}
+		<script>
+			{# Cameleon init #}
+			(function ($) {
+				$.fn.cameleonReady = function (fn) {
+					return this.on('cameleon-ready', fn);
+				};
+				$(document).ready(function () {
+					$(document).trigger('cameleon-ready');
+				});
+			})(jQuery);
+		</script>
 	{% endblock %}
 </head>
 <body{% block body_attr %}{% endblock %}>
@@ -48,9 +59,9 @@
 {% block javascripts_bottom %}
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
 	{% if not cameleon.bootstrap.use_cdn or app.debug %}
-	<script src="{{ asset('bundles/esbase/js/bootstrap.min.js') }}"></script>
+		<script src="{{ asset('bundles/esbase/js/bootstrap.min.js') }}"></script>
 	{% else %}
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+		<script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 	{% endif %}
 {% endblock %}
 {% for src in get_js_includes() %}

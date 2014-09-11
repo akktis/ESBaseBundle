@@ -5,6 +5,8 @@ namespace ES\Bundle\BaseBundle\Form\Type;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use ES\Bundle\BaseBundle\Assetic\AssetsStack;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Templating\Asset\PackageInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -18,19 +20,12 @@ class Select2DoctrineType extends Select2Type
 		$this->parent = $parent;
 	}
 
-	public function buildForm(FormBuilderInterface $builder, array $options)
+	public function setDefaultOptions(OptionsResolverInterface $resolver)
 	{
-//		$builder->resetViewTransformers();
-//
-//		if ($options['multiple']) {
-//			$builder
-//				->addEventSubscriber(new MergeDoctrineCollectionListener())
-//				->addViewTransformer(new CollectionToArrayTransformer())
-//				->addViewTransformer(new ChoicesToValuesTransformer($options['choice_list']))
-//			;
-//		} else {
-//			$builder->addViewTransformer(new ChoiceToValueTransformer($options['choice_list']));
-//		}
+		parent::setDefaultOptions($resolver);
+		$resolver->setDefaults(array(
+			'choices' => null,
+		));
 	}
 
 	protected function getJSOptions(array $options)
