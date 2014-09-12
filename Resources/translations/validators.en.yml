@@ -1,0 +1,8 @@
+
+gmap:
+    location:
+        min_level:
+            country: You must define at least country
+            locality:  You must precise the locality
+            route:  You must precise the street
+            street_number: You must precise the street number

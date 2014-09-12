@@ -195,7 +195,7 @@ Cameleon.form = {
 			var options = $.extend({
 				allowFreeEntries: false,
 				multiple: false,
-				width: 200,
+				width: null,
 				url: null,
 				selectOnBlur: false,
 				labelSearching: 'Searching ...',

@@ -30,6 +30,7 @@
 			{% endif %}
 		{% endif %}
 		{% set full_name = full_name|replace({'[]': ''}) %}
+		{% set attr = attr|merge({ 'class': (attr.class|default('') ~ ' cameleon-select2')|trim }) %}
 
 		<input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}>
 
