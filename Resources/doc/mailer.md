@@ -105,3 +105,11 @@ $mailer->send('AcmeDemoBundle:Mail:my_custom_mail.html.twig',
 	['/var/www/uploads/a.jpg', '/var/www/static/demo.pdf']
 );
 ```
+
+#### Command line
+
+In order to test your mail configuration you can send test mails with the command `es:mailer:send`:
+
+```bash
+$ bin/console es:mailer:send ademoulins@entropic-synergies.com 'ESBaseBundle:Mail:test.html.twig' -a /path/to/attached-file.pdf
+```
