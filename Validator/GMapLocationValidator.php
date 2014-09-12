@@ -7,25 +7,18 @@ use Symfony\Component\Validator\ConstraintValidator;
 
 class GMapLocationValidator extends ConstraintValidator
 {
-	private $fieldsMapping = [
-		'country'       => [
-			'country',
-		],
-		'locality'      => [
-			'locality',
-			'country',
-		],
-		'route'         => [
-			'route',
-			'locality',
-			'country',
-		],
-		'street_number' => [
-			'street_number',
-			'route',
-			'locality',
-			'country',
-		],
+	private $fieldPriority = [
+		'country',
+		'locality',
+		'route',
+		'street_number',
+	];
+
+	private $fieldMapping = [
+		'country'       => 'country',
+		'locality'      => 'locality',
+		'route'         => 'route',
+		'street_number' => 'street_number',
 	];
 
 	/**
@@ -42,21 +35,28 @@ class GMapLocationValidator extends ConstraintValidator
 			return;
 		}
 
-		if (!isset($this->fieldsMapping[$constraint->minLevel])) {
+		if (!isset($this->fieldMapping[$constraint->minLevel])) {
 			throw new \InvalidArgumentException(sprintf('Invalid level "%s". Available levels are "%s"',
 				$constraint->minLevel,
-				implode('", "', array_keys($this->fieldsMapping))
+				implode('", "', array_keys($this->fieldMapping))
 			));
 		}
 
-		$requirements = $this->fieldsMapping[$constraint->minLevel];
+		$requirement = $this->fieldMapping[$constraint->minLevel];
 
-		foreach ($requirements as $requirement) {
-			if (!array_key_exists($requirement, $location)) {
-				throw new \InvalidArgumentException(sprintf('Missing "%s" key on location.', $requirement));
+		$priorities = $this->fieldPriority;
+		foreach ($priorities as $field) {
+			if (!array_key_exists($field, $location)) {
+				throw new \InvalidArgumentException(sprintf('Missing "%s" key on location.', $field));
 			}
-			if (!$location[$requirement]) {
-				$this->context->addViolation($constraint->minLevelMessages[$minLevel], ['%level%' => $minLevel]);
+			if (!$location[$field]) {
+				$this->context->addViolation($constraint->minLevelMessages[$field], ['%level%' => $field]);
+				return;
+			}
+
+			// We arrive at the end of the min level requirement
+			if ($field === $requirement) {
+				return;
 			}
 		}
 	}
