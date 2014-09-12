@@ -1,15 +1,17 @@
 parameters:
     es_base.model_manager_name: null
+    es_base.templating.assets.stack.class: ES\Bundle\BaseBundle\Assetic\AssetsStack
+    es_base.twig.extension.base.class: ES\Bundle\BaseBundle\Twig\Extension\BaseExtension
 
 services:
     es_base.templating.assets.stack:
-        class: ES\Bundle\BaseBundle\Assetic\AssetsStack
+        class: %es_base.templating.assets.stack.class%
         arguments:
             - @service_container
 
     es_base.twig.extension.base:
         public: false
-        class: ES\Bundle\BaseBundle\Twig\Extension\BaseExtension
+        class: %es_base.twig.extension.base.class%
         arguments:
             - @service_container
             - @es_base.templating.assets.stack

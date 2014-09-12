@@ -1,4 +1,6 @@
 parameters:
+    es_base.security.access_listener.class: ES\Bundle\BaseBundle\Security\Listener\StagingListener
+
     es_base.security.provider_key: cameleon_staging
     es_base.security.login_path: /staging/login
     es_base.security.login_check: /staging/login_check
@@ -31,7 +33,7 @@ services:
             - true
 
     es_base.security.access_listener:
-        class: ES\Bundle\BaseBundle\Security\Listener\StagingListener
+        class: %es_base.security.access_listener.class%
         arguments:
             - @es_base.security.context
             - @es_base.security.authentication.manager

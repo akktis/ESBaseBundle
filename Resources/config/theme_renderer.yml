@@ -1,0 +1,10 @@
+parameters:
+    es_base.twig.theme_renderer.class: ES\Bundle\BaseBundle\Twig\Renderer\ThemeRenderer
+
+services:
+    es_base.twig.theme_renderer.abstract:
+        public: false
+        astract: true
+        class: %es_base.twig.theme_renderer.class%
+        arguments:
+            - @twig

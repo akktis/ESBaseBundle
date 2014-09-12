@@ -31,6 +31,7 @@ class ESBaseExtension extends Extension implements PrependExtensionInterface
 		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 		$loader->load('services.yml');
 		$loader->load('form.yml');
+		$loader->load('theme_renderer.yml');
 
 		$container->setParameter('es_base.db_driver', $config['db_driver']);
 		$container->setAlias('es_base.object_manager', $this->getDefaultObjectManagerService($config['db_driver']));
