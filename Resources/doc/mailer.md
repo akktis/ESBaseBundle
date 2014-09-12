@@ -81,6 +81,8 @@ $mailer->send('AcmeDemoBundle:Mail:my_custom_mail.html.twig',
 );
 ```
 
+An optional 4th argument is used to override the sender email.
+
 You you intend to send a mail to the authenticated user, you should use:
 
 ```php
@@ -88,5 +90,18 @@ $mailer->sendToUser(
 	'AcmeDemoBundle:Mail:my_custom_mail.html.twig',
 	array('message' => $message),
 	$user
+);
+```
+
+#### Attachments
+
+You can pass some files path to the mailer service to attach these ones to the mail:
+
+```php
+$mailer->send('AcmeDemoBundle:Mail:my_custom_mail.html.twig',
+	'recipient@website.com',
+	array('message' => $message),
+	null, // sender email, by default its the one set in your configuration
+	['/var/www/uploads/a.jpg', '/var/www/static/demo.pdf']
 );
 ```
