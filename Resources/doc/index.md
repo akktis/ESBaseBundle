@@ -4,8 +4,13 @@
 - [Assetic with sprites](assetic.md)
 - [Staging configuration](staging.md)
 - [Google Analytics](google_analytics.md)
+- [Mailer](mailer.md)
+- [Contact](contact.md)
+- [Feedback](feedback.md) (UserVoice)
 
-## Configure bootstrap bundle
+## Installation
+
+### Configure bootstrap bundle
 
 Enable BraincraftedBootstrapBundle:
 
@@ -22,50 +27,6 @@ class AppKernel extends Kernel
         );
     }
 }
-```
-
-## Configure mailer:
-
-
-```yaml
-# /app/config/config.yml
-
-es_base:
-    # ...
-    mailer:
-        sender_address: no-reply@acmedemo.com
-```
-
-## Configure contact:
-
-```yaml
-# /app/config/config.yml
-
-es_base:
-    # ...
-    contact: ~
-```
-
-All messages are persisted to the database but if you wish to receive contact messages by email,
-you can add `deliver_to` option:
-
-```yaml
-    contact:
-        deliver_to: contact@acmedemo.com
-```
-
-## Configure feedback:
-
-Today there is only the `uservoice` provider.
-
-```yaml
-# /app/config/config.yml
-
-es_base:
-    # ...
-    feedback:
-        options:
-            key: idhgfsdoiqsoidjsqd
 ```
 
 ## TODO
