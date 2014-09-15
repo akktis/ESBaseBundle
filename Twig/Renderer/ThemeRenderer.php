@@ -22,7 +22,7 @@ class ThemeRenderer
 	/**
 	 * @var array
 	 */
-	private $variableStack = array();
+	private $variableStack;
 
 	public function __construct(ThemeRendererEngine $engine)
 	{
@@ -34,11 +34,9 @@ class ThemeRenderer
 		$this->engine->setTheme($item, $themes);
 	}
 
-	public function searchAndRenderBlock(ItemInterface $item, array $typeHierarchy, $blockNameSuffix, array $variables = array())
+	public function searchAndRenderBlock(array $typeHierarchy, $blockNameSuffix, array $variables = array())
 	{
-		// The cache key for storing the variables and types
-		$viewCacheKey          = $item->getUniqueId();
-		$viewAndSuffixCacheKey = $viewCacheKey . $blockNameSuffix;
+		$viewAndSuffixCacheKey = $blockNameSuffix;
 
 		// In templates, we have to deal with two kinds of block hierarchies:
 		//
@@ -90,8 +88,8 @@ class ThemeRenderer
 
 		// The variables are cached globally for a view (instead of for the
 		// current suffix)
-		if (!isset($this->variableStack[$viewCacheKey])) {
-			$this->variableStack[$viewCacheKey] = array();
+		if (null === $this->variableStack) {
+			$this->variableStack = array();
 
 			// The default variable scope contains all view variables, merged with
 			// the variables passed explicitly to the helper
@@ -100,26 +98,26 @@ class ThemeRenderer
 			$varInit = true;
 		} else {
 			// Reuse the current scope and merge it with the explicitly passed variables
-			$scopeVariables = end($this->variableStack[$viewCacheKey]);
+			$scopeVariables = end($this->variableStack);
 
 			$varInit = false;
 		}
 
 		// Load the resource where this block can be found
-		$resource = $this->engine->getResourceForBlockNameHierarchy($item, $blockNameHierarchy, $hierarchyLevel);
+		$resource = $this->engine->getResourceForBlockNameHierarchy($blockNameHierarchy, $hierarchyLevel);
 
 		// Update the current hierarchy level to the one at which the resource was
 		// found. For example, if looking for "choice_widget", but only a resource
 		// is found for its parent "form_widget", then the level is updated here
 		// to the parent level.
-		$hierarchyLevel = $this->engine->getResourceHierarchyLevel($item, $blockNameHierarchy, $hierarchyLevel);
+		$hierarchyLevel = $this->engine->getResourceHierarchyLevel($blockNameHierarchy, $hierarchyLevel);
 
 		// The actually existing block name in $resource
 		$blockName = $blockNameHierarchy[$hierarchyLevel];
 
 		// Escape if no resource exists for this block
 		if (!$resource) {
-			throw new LogicException(sprintf(
+			throw new \LogicException(sprintf(
 				'Unable to render the form as none of the following blocks exist: "%s".',
 				implode('", "', array_reverse($blockNameHierarchy))
 			));
@@ -137,13 +135,13 @@ class ThemeRenderer
 
 		// We also need to store the variables for the view so that we can render other
 		// blocks for the same view using the same variables as in the outer block.
-		$this->variableStack[$viewCacheKey][] = $variables;
+		$this->variableStack[] = $variables;
 
 		// Do the rendering
-		$html = $this->engine->renderBlock($item, $resource, $blockName, $variables);
+		$html = $this->engine->renderBlock($resource, $blockName, $variables);
 
 		// Clear the stack
-		array_pop($this->variableStack[$viewCacheKey]);
+		array_pop($this->variableStack);
 
 		// Clear the caches if they were filled for the first time within
 		// this function call
@@ -153,7 +151,7 @@ class ThemeRenderer
 		}
 
 		if ($varInit) {
-			unset($this->variableStack[$viewCacheKey]);
+			unset($this->variableStack);
 		}
 
 		return $html;

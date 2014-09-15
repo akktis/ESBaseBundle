@@ -55,23 +55,21 @@ class ThemeRendererEngine extends AbstractRendererEngine
 	 *
 	 * @see getResourceForBlock()
 	 *
-	 * @param string        $cacheKey  The cache key of the form view.
-	 * @param ItemInterface $item      The item for finding the applying themes.
-	 * @param string        $blockName The name of the block to load.
+	 * @param string $blockName The name of the block to load.
 	 *
 	 * @return bool    True if the resource could be loaded, false otherwise.
 	 */
-	protected function loadResourceForBlockName($cacheKey, ItemInterface $item, $blockName)
+	protected function loadResourceForBlockName($blockName)
 	{
 		// The caller guarantees that $this->resources[$cacheKey][$block] is
 		// not set, but it doesn't have to check whether $this->resources[$cacheKey]
 		// is set. If $this->resources[$cacheKey] is set, all themes for this
 		// $cacheKey are already loaded (due to the eager population, see doc comment).
-		if (isset($this->resources[$cacheKey])) {
+		if (null !== $this->resources) {
 			// As said in the previous, the caller guarantees that
 			// $this->resources[$cacheKey][$block] is not set. Since the themes are
 			// already loaded, it can only be a non-existing block.
-			$this->resources[$cacheKey][$blockName] = false;
+			$this->resources[$blockName] = null;
 
 			return false;
 		}
@@ -82,58 +80,40 @@ class ThemeRendererEngine extends AbstractRendererEngine
 		// themes are taken into account.
 
 		// Check each theme whether it contains the searched block
-		if (isset($this->themes[$cacheKey])) {
-			for ($i = count($this->themes[$cacheKey]) - 1; $i >= 0; --$i) {
-				$this->loadResourcesFromTheme($cacheKey, $this->themes[$cacheKey][$i]);
+		if (isset($this->themes)) {
+			for ($i = count($this->themes) - 1; $i >= 0; --$i) {
+				$this->loadResourcesFromTheme($this->themes[$i]);
 				// CONTINUE LOADING (see doc comment)
 			}
 		}
 
-		// Check the default themes once we reach the root view without success
-		if (!$item->parent) {
-			for ($i = count($this->defaultThemes) - 1; $i >= 0; --$i) {
-				$this->loadResourcesFromTheme($cacheKey, $this->defaultThemes[$i]);
-				// CONTINUE LOADING (see doc comment)
-			}
+		for ($i = count($this->defaultThemes) - 1; $i >= 0; --$i) {
+			$this->loadResourcesFromTheme($this->defaultThemes[$i]);
+			// CONTINUE LOADING (see doc comment)
 		}
 
 		// Proceed with the themes of the parent view
-		if ($item->parent) {
-			$parentCacheKey = $item->parent->vars[self::CACHE_KEY_VAR];
-
-			if (!isset($this->resources[$parentCacheKey])) {
-				$this->loadResourceForBlockName($parentCacheKey, $item->parent, $blockName);
-			}
-
-			// EAGER CACHE POPULATION (see doc comment)
-			foreach ($this->resources[$parentCacheKey] as $nestedBlockName => $resource) {
-				if (!isset($this->resources[$cacheKey][$nestedBlockName])) {
-					$this->resources[$cacheKey][$nestedBlockName] = $resource;
-				}
-			}
-		}
 
 		// Even though we loaded the themes, it can happen that none of them
 		// contains the searched block
-		if (!isset($this->resources[$cacheKey][$blockName])) {
+		if (!isset($this->resources[$blockName])) {
 			// Cache that we didn't find anything to speed up further accesses
-			$this->resources[$cacheKey][$blockName] = false;
+			$this->resources[$blockName] = false;
 		}
 
-		return false !== $this->resources[$cacheKey][$blockName];
+		return false !== $this->resources[$blockName];
 	}
 
 	/**
 	 * Loads the resources for all blocks in a theme.
 	 *
-	 * @param string $cacheKey The cache key for storing the resource.
 	 * @param mixed  $theme    The theme to load the block from. This parameter
 	 *                         is passed by reference, because it might be necessary
 	 *                         to initialize the theme first. Any changes made to
 	 *                         this variable will be kept and be available upon
 	 *                         further calls to this method using the same theme.
 	 */
-	protected function loadResourcesFromTheme($cacheKey, &$theme)
+	protected function loadResourcesFromTheme(&$theme)
 	{
 		if (!$theme instanceof \Twig_Template) {
 			/* @var \Twig_Template $theme */
@@ -159,10 +139,10 @@ class ThemeRendererEngine extends AbstractRendererEngine
 		// overriding blocks already set.
 		do {
 			foreach ($currentTheme->getBlocks() as $block => $blockData) {
-				if (!isset($this->resources[$cacheKey][$block])) {
+				if (!isset($this->resources[$block])) {
 					// The resource given back is the key to the bucket that
 					// contains this block.
-					$this->resources[$cacheKey][$block] = $blockData;
+					$this->resources[$block] = $blockData;
 				}
 			}
 		} while (false !== $currentTheme = $currentTheme->getParent($context));
