@@ -29,9 +29,9 @@ class ThemeRenderer
 		$this->engine = $engine;
 	}
 
-	public function setTheme(ItemInterface $item, $themes)
+	public function setTheme($themes)
 	{
-		$this->engine->setTheme($item, $themes);
+		$this->engine->setTheme($themes);
 	}
 
 	public function searchAndRenderBlock(array $typeHierarchy, $blockNameSuffix, array $variables = array())
@@ -106,6 +106,14 @@ class ThemeRenderer
 		// Load the resource where this block can be found
 		$resource = $this->engine->getResourceForBlockNameHierarchy($blockNameHierarchy, $hierarchyLevel);
 
+		// Escape if no resource exists for this block
+		if (!$resource) {
+			throw new \LogicException(sprintf(
+				'Unable to render the form as none of the following blocks exist: "%s".',
+				implode('", "', array_reverse($blockNameHierarchy))
+			));
+		}
+
 		// Update the current hierarchy level to the one at which the resource was
 		// found. For example, if looking for "choice_widget", but only a resource
 		// is found for its parent "form_widget", then the level is updated here
@@ -115,13 +123,6 @@ class ThemeRenderer
 		// The actually existing block name in $resource
 		$blockName = $blockNameHierarchy[$hierarchyLevel];
 
-		// Escape if no resource exists for this block
-		if (!$resource) {
-			throw new \LogicException(sprintf(
-				'Unable to render the form as none of the following blocks exist: "%s".',
-				implode('", "', array_reverse($blockNameHierarchy))
-			));
-		}
 
 		// In order to make recursive calls possible, we need to store the block hierarchy,
 		// the current level of the hierarchy and the variables so that this method can

@@ -25,10 +25,8 @@ class ThemeRendererEngine extends AbstractRendererEngine
 	/**
 	 * {@inheritdoc}
 	 */
-	public function renderBlock(ItemInterface $item, $resource, $blockName, array $variables = array())
+	public function renderBlock($resource, $blockName, array $variables = array())
 	{
-		$cacheKey = $item->getUniqueId();
-
 		$context = $this->environment->mergeGlobals($variables);
 
 		ob_start();
@@ -40,7 +38,7 @@ class ThemeRendererEngine extends AbstractRendererEngine
 
 		// We do not call renderBlock here to avoid too many nested level calls
 		// (XDebug limits the level to 100 by default)
-		$this->template->displayBlock($blockName, $context, $this->resources[$cacheKey]);
+		$this->template->displayBlock($blockName, $context, $this->resources);
 
 		return ob_get_clean();
 	}

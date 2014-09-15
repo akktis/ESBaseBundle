@@ -17,7 +17,7 @@ abstract class AbstractRendererEngine
 	/**
 	 * @var array
 	 */
-	protected $resources = array();
+	protected $resources;
 
 	/**
 	 * @var array
@@ -38,18 +38,16 @@ abstract class AbstractRendererEngine
 	/**
 	 * {@inheritdoc}
 	 */
-	public function setTheme(ItemInterface $item, $themes)
+	public function setTheme($themes)
 	{
-		$cacheKey = $item->getUniqueId();
-
 		// Do not cast, as casting turns objects into arrays of properties
-		$this->themes[$cacheKey] = is_array($themes) ? $themes : array($themes);
+		$this->themes = is_array($themes) ? $themes : array($themes);
 
 		// Unset instead of resetting to an empty array, in order to allow
 		// implementations (like TwigRendererEngine) to check whether $cacheKey
 		// is set at all.
-		unset($this->resources[$cacheKey]);
-		unset($this->resourceHierarchyLevels[$cacheKey]);
+		$this->resources = null;
+		$this->resourceHierarchyLevels = null;
 	}
 
 	public function getResourceForBlockName(ItemInterface $item, $blockName)
