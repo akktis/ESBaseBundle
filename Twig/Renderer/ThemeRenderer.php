@@ -5,120 +5,157 @@ namespace ES\Bundle\BaseBundle\Twig\Renderer;
 class ThemeRenderer
 {
 	/**
-	 * @var \Twig_Environment
+	 * @var ThemeRendererEngine
 	 */
-	private $environment;
-
-	/**
-	 * @var \Twig_Template
-	 */
-	private $template;
+	private $engine;
 
 	/**
 	 * @var array
 	 */
-	protected $resources = array();
+	private $blockNameHierarchyMap = array();
 
 	/**
-	 * @var string
+	 * @var array
 	 */
-	private $themes;
+	private $hierarchyLevelMap = array();
 
-	public function __construct(\Twig_Environment $environment, array $themes)
+	/**
+	 * @var array
+	 */
+	private $variableStack = array();
+
+	public function __construct(ThemeRendererEngine $engine)
 	{
-		$this->environment = $environment;
-		$this->themes      = $themes;
+		$this->engine = $engine;
 	}
 
-	/**
-	 * @param array $blockNames A list of blocks ordered by priority
-	 * @param array $parameters
-	 * @return string
-	 * @throws \RuntimeException
-	 */
-	public function searchAndRenderBlock(array $blockNames, array $parameters = array())
+	public function setTheme(ItemInterface $item, $themes)
 	{
-		foreach ($blockNames as $blockName) {
-			/** @var \Twig_Template $resource */
-			if ($resource = $this->getResourceForBlockName($blockName)) {
-				break;
+		$this->engine->setTheme($item, $themes);
+	}
+
+	public function searchAndRenderBlock(ItemInterface $item, array $typeHierarchy, $blockNameSuffix, array $variables = array())
+	{
+		// The cache key for storing the variables and types
+		$viewCacheKey          = $item->getUniqueId();
+		$viewAndSuffixCacheKey = $viewCacheKey . $blockNameSuffix;
+
+		// In templates, we have to deal with two kinds of block hierarchies:
+		//
+		//   +---------+          +---------+
+		//   | Theme B | -------> | Theme A |
+		//   +---------+          +---------+
+		//
+		//   form_widget -------> form_widget
+		//       ^
+		//       |
+		//  choice_widget -----> choice_widget
+		//
+		// The first kind of hierarchy is the theme hierarchy. This allows to
+		// override the block "choice_widget" from Theme A in the extending
+		// Theme B. This kind of inheritance needs to be supported by the
+		// template engine and, for example, offers "parent()" or similar
+		// functions to fall back from the custom to the parent implementation.
+		//
+		// The second kind of hierarchy is the form type hierarchy. This allows
+		// to implement a custom "choice_widget" block (no matter in which theme),
+		// or to fallback to the block of the parent type, which would be
+		// "form_widget" in this example (again, no matter in which theme).
+		// If the designer wants to explicitly fallback to "form_widget" in his
+		// custom "choice_widget", for example because he only wants to wrap
+		// a <div> around the original implementation, he can simply call the
+		// widget() function again to render the block for the parent type.
+		//
+		// The second kind is implemented in the following blocks.
+		if (!isset($this->blockNameHierarchyMap[$viewAndSuffixCacheKey])) {
+			// INITIAL CALL
+			// Calculate the hierarchy of template blocks and start on
+			// the bottom level of the hierarchy (= "_<id>_<section>" block)
+			$blockNameHierarchy = array();
+			foreach ($typeHierarchy as $blockNamePrefix) {
+				$blockNameHierarchy[] = $blockNamePrefix . '_' . $blockNameSuffix;
 			}
+			$hierarchyLevel = count($blockNameHierarchy) - 1;
+
+			$hierarchyInit = true;
+		} else {
+			// RECURSIVE CALL
+			// If a block recursively calls searchAndRenderBlock() again, resume rendering
+			// using the parent type in the hierarchy.
+			$blockNameHierarchy = $this->blockNameHierarchyMap[$viewAndSuffixCacheKey];
+			$hierarchyLevel     = $this->hierarchyLevelMap[$viewAndSuffixCacheKey] - 1;
+
+			$hierarchyInit = false;
 		}
+
+		// The variables are cached globally for a view (instead of for the
+		// current suffix)
+		if (!isset($this->variableStack[$viewCacheKey])) {
+			$this->variableStack[$viewCacheKey] = array();
+
+			// The default variable scope contains all view variables, merged with
+			// the variables passed explicitly to the helper
+			$scopeVariables = array();
+
+			$varInit = true;
+		} else {
+			// Reuse the current scope and merge it with the explicitly passed variables
+			$scopeVariables = end($this->variableStack[$viewCacheKey]);
+
+			$varInit = false;
+		}
+
+		// Load the resource where this block can be found
+		$resource = $this->engine->getResourceForBlockNameHierarchy($item, $blockNameHierarchy, $hierarchyLevel);
+
+		// Update the current hierarchy level to the one at which the resource was
+		// found. For example, if looking for "choice_widget", but only a resource
+		// is found for its parent "form_widget", then the level is updated here
+		// to the parent level.
+		$hierarchyLevel = $this->engine->getResourceHierarchyLevel($item, $blockNameHierarchy, $hierarchyLevel);
+
+		// The actually existing block name in $resource
+		$blockName = $blockNameHierarchy[$hierarchyLevel];
 
 		// Escape if no resource exists for this block
 		if (!$resource) {
-			throw new \RuntimeException(sprintf(
-				'Unable to render the object as none of the following blocks exist: "%s".',
-				implode('", "', $blockNames)
+			throw new LogicException(sprintf(
+				'Unable to render the form as none of the following blocks exist: "%s".',
+				implode('", "', array_reverse($blockNameHierarchy))
 			));
 		}
 
-		var_dump($blockName, $resource[0]->getTemplateName());
-		$html = $this->renderBlock($resource, $blockName, $parameters);
-		var_dump($html);
+		// In order to make recursive calls possible, we need to store the block hierarchy,
+		// the current level of the hierarchy and the variables so that this method can
+		// resume rendering one level higher of the hierarchy when it is called recursively.
+		//
+		// We need to store these values in maps (associative arrays) because within a
+		// call to widget() another call to widget() can be made, but for a different view
+		// object. These nested calls should not override each other.
+		$this->blockNameHierarchyMap[$viewAndSuffixCacheKey] = $blockNameHierarchy;
+		$this->hierarchyLevelMap[$viewAndSuffixCacheKey]     = $hierarchyLevel;
+
+		// We also need to store the variables for the view so that we can render other
+		// blocks for the same view using the same variables as in the outer block.
+		$this->variableStack[$viewCacheKey][] = $variables;
+
+		// Do the rendering
+		$html = $this->engine->renderBlock($item, $resource, $blockName, $variables);
+
+		// Clear the stack
+		array_pop($this->variableStack[$viewCacheKey]);
+
+		// Clear the caches if they were filled for the first time within
+		// this function call
+		if ($hierarchyInit) {
+			unset($this->blockNameHierarchyMap[$viewAndSuffixCacheKey]);
+			unset($this->hierarchyLevelMap[$viewAndSuffixCacheKey]);
+		}
+
+		if ($varInit) {
+			unset($this->variableStack[$viewCacheKey]);
+		}
 
 		return $html;
-	}
-
-	public function getResourceForBlockName($blockName)
-	{
-		if (!isset($this->resources[$blockName])) {
-			$this->loadResourceForBlockName($blockName);
-		}
-
-		return $this->resources[$blockName];
-	}
-
-	public function renderBlock($resource, $blockName, array $parameters = array())
-	{
-		$context = $this->environment->mergeGlobals($parameters);
-
-		ob_start();
-
-		$this->template->displayBlock($blockName, $context, $resource);
-
-		return ob_get_clean();
-	}
-
-	protected function loadResourceForBlockName($blockName)
-	{
-		if (isset($this->resources[$blockName])) {
-			return $this->resources[$blockName];
-		}
-
-		for ($i = count($this->themes) - 1; $i >= 0; --$i) {
-			$this->loadResourcesFromTheme($this->themes[$i]);
-		}
-
-		if (!isset($this->resources[$blockName])) {
-			$this->resources[$blockName] = false;
-		}
-
-		return false !== $this->resources[$blockName];
-	}
-
-	protected function loadResourcesFromTheme(&$theme)
-	{
-		if (!$theme instanceof \Twig_Template) {
-			$theme = $this->environment->loadTemplate($theme);
-		}
-
-		if (null === $this->template) {
-			// Store the first \Twig_Template instance that we find so that
-			// we can call displayBlock() later on. It doesn't matter *which*
-			// template we use for that, since we pass the used blocks manually
-			// anyway.
-			$this->template = $theme;
-		}
-		$currentTheme = $theme;
-		$context      = $this->environment->mergeGlobals(array());
-
-		do {
-			foreach ($currentTheme->getBlocks() as $block => $blockData) {
-				if (!isset($this->resources[$block])) {
-					$this->resources[$block] = $blockData;
-				}
-			}
-		} while (false !== $currentTheme = $currentTheme->getParent($context));
 	}
 }
