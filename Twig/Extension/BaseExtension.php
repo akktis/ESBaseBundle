@@ -6,25 +6,30 @@
 namespace ES\Bundle\BaseBundle\Twig\Extension;
 
 use ES\Bundle\BaseBundle\Assetic\AssetsStack;
+use ES\Bundle\BaseBundle\Translation\FallbackTranslatorInterface;
 use IntlDateFormatter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class BaseExtension extends \Twig_Extension
 {
-	private $useBootstrapCdn;
-
 	private $container;
 
 	private $assetsStack;
 
+	/**
+	 * @var FallbackTranslatorInterface
+	 */
+	private $fallbackTranslator;
+
 	private $cameleonGlobals;
 
-	public function __construct(ContainerInterface $container, AssetsStack $assetsStack, array $cameleonGlobals)
+	public function __construct(ContainerInterface $container, AssetsStack $assetsStack, FallbackTranslatorInterface $fallbackTranslator, array $cameleonGlobals)
 	{
-		$this->container       = $container;
-		$this->assetsStack     = $assetsStack;
-		$this->cameleonGlobals = $cameleonGlobals;
+		$this->container          = $container;
+		$this->assetsStack        = $assetsStack;
+		$this->fallbackTranslator = $fallbackTranslator;
+		$this->cameleonGlobals    = $cameleonGlobals;
 	}
 
 	public function setGlobal($key, $value)
@@ -45,6 +50,9 @@ class BaseExtension extends \Twig_Extension
 					$this,
 					'twig_localized_date_filter'
 				), array('needs_environment' => true)),
+			new \Twig_SimpleFilter('transfallback', array($this, 'transFallback'), array('is_safe' => array('html'))),
+			new \Twig_SimpleFilter('transchoicefallback', array($this,
+				'transChoiceFallback'), array('is_safe' => array('html')))
 		);
 	}
 
@@ -57,7 +65,7 @@ class BaseExtension extends \Twig_Extension
 			new \Twig_SimpleFunction('get_js_code', array($this->assetsStack, 'getJavascriptCode'), array(
 				'is_safe' => array(
 					'html' => true,
-					'js' => true,
+					'js'   => true,
 				)
 			)),
 			new \Twig_SimpleFunction('get_js_includes', array($this->assetsStack, 'getJavascriptIncludes')),
@@ -76,6 +84,20 @@ class BaseExtension extends \Twig_Extension
 		return array(
 			'cameleon' => $this->cameleonGlobals,
 		);
+	}
+
+	public function transFallback(array $keys, array $params = array(), $domain = null, $locale = null)
+	{
+		return $this->fallbackTranslator->translate($keys, $params, $domain, $locale);
+	}
+
+	public function transChoiceFallback(array $keys, $count, array $params = array(), $domain = null, $locale = null)
+	{
+		if (!isset($params['%count%'])) {
+			$params['%count%'] = $count;
+		}
+
+		return $this->fallbackTranslator->translateChoice($keys, $count, $params, $domain, $locale);
 	}
 
 	public function twig_localized_date_filter(\Twig_Environment $env, $date, $dateFormat = 'medium', $timeFormat = 'medium', $locale = null, $timezone = null, $format = null)

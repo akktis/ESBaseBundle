@@ -9,12 +9,18 @@ services:
         arguments:
             - @service_container
 
+    es_base.translator_fallback:
+        class: ES\Bundle\BaseBundle\Translation\FallbackTranslator
+        arguments:
+            - @translator
+
     es_base.twig.extension.base:
         public: false
         class: %es_base.twig.extension.base.class%
         arguments:
             - @service_container
             - @es_base.templating.assets.stack
+            - @es_base.translator_fallback
             -
                 host_env: %es_base.host_env%
                 project_url: %es_base.project_url%
