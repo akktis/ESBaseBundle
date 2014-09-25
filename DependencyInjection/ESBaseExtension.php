@@ -77,11 +77,15 @@ class ESBaseExtension extends Extension implements PrependExtensionInterface
 		$container->setParameter('es_base.templating.bootstrap.use_cdn', $config['templating']['bootstrap']['use_cdn']);
 	}
 
-	private function configureTwigBundle(ContainerBuilder $container, array $config, $braincraftedBootstrapBundle = false)
+	private function configureTwigBundle(ContainerBuilder $container, array $config)
 	{
+		$bundles = $container->getParameter('kernel.bundles');
 		$formTemplates = array();
-		if ($braincraftedBootstrapBundle) {
+		if (isset($bundles['BraincraftedBootstrapBundle'])) {
 			$formTemplates[] = 'BraincraftedBootstrapBundle:Form:bootstrap.html.twig';
+		}
+		if (isset($bundles['ESFileUploadBundle'])) {
+			$formTemplates[] = 'ESFileUploadBundle:Form:types.html.twig';
 		}
 		$formTemplates[] = $config['templating']['form'];
 
@@ -201,7 +205,7 @@ class ESBaseExtension extends Extension implements PrependExtensionInterface
 		$config  = $this->processConfiguration(new Configuration(), $configs);
 
 		if (isset($bundles['TwigBundle'])) {
-			$this->configureTwigBundle($container, $config, isset($bundles['BraincraftedBootstrapBundle']));
+			$this->configureTwigBundle($container, $config);
 		}
 	}
 }
