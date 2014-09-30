@@ -34,8 +34,8 @@ public function listAction()
 
 #### In the view:
 
-You should separate your view.
-The main one which contains the layout of the list.
+You should separate your views.
+The main one which contains the layout of the list:
 
 ```django
 {# src/Acme/DemoBundle/Resources/views/List/list.html.twig #}
@@ -53,7 +53,7 @@ The main one which contains the layout of the list.
 </script>
 ```
 
-And the variable content which can be loaded via AJAX:
+And the partial one with variable content which can be loaded via AJAX:
 
 ```django
 {# src/Acme/DemoBundle/Resources/views/List/list_content.html.twig #}

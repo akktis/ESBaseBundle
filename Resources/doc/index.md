@@ -7,7 +7,7 @@
 - [Mailer](mailer.md)
 - [Contact](contact.md)
 - [Feedback](feedback.md) (UserVoice)
-- [LoadMore](loadmore.md) (UserVoice)
+- [Load more](loadmore.md)
 
 ## Installation
 
