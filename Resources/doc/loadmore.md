@@ -136,3 +136,5 @@ In your partial view:
 	{% endfor %}
 </div>
 ```
+
+[Return to index](index.md)

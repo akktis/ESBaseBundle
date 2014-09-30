@@ -113,3 +113,5 @@ In order to test your mail configuration you can send test mails with the comman
 ```bash
 $ bin/console es:mailer:send ademoulins@entropic-synergies.com 'ESBaseBundle:Mail:test.html.twig' -a /path/to/attached-file.pdf
 ```
+
+[Return to index](index.md)

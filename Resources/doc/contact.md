@@ -18,3 +18,5 @@ you can add `deliver_to` option:
     contact:
         deliver_to: contact@acmedemo.com
 ```
+
+[Return to index](index.md)
