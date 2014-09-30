@@ -161,14 +161,25 @@ class LoadMore implements \IteratorAggregate
 
 	public function hasMore()
 	{
-		return count($this->getIterator()) === $this->maxPerPage;
+		$iterator = $this->getIterator();
+		if (null === $iterator->getLastValue()) {
+			foreach ($iterator as $row) {
+				;
+			}
+		}
+
+		return count($iterator) === $this->maxPerPage;
 	}
 
+	/**
+	 * @return LoadMoreIterator
+	 */
 	public function getIterator()
 	{
 		if ($this->iterator) {
 			return $this->iterator;
 		}
+
 		$loadMore = $this->request->query->get(self::QUERY_PARAM);
 		$result   = $this->adapter->getResult($this->maxPerPage, $loadMore['id'], isset($loadMore['date']) ? $loadMore['date'] : null);
 
