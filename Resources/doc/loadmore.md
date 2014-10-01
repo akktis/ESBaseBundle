@@ -69,12 +69,14 @@ And the partial one with variable content which can be loaded via AJAX:
 </div>
 {% if items.hasMore %}
 	<div class="loadmore-action">
-		<a href="{{ items.moreUri }}" class="loadmore-btn btn btn-default">
+		<a href="{{ items.moreUri|raw }}" class="loadmore-btn btn btn-default">
 			Load more
 		</a>
 	</div>
 {% endif %}
 ```
+
+> **Notice** that we use the `raw` filter to avoid escaping URI
 
 ### Custom fields
 
@@ -125,7 +127,7 @@ In your partial view:
 {# src/Acme/DemoBundle/Resources/views/List/list_content.html.twig #}
 {% if items.hasMore %}
 	<div class="loadmore-action">
-		<a href="{{ items.moreUri }}" class="loadmore-btn btn btn-default">
+		<a href="{{ items.moreUri|raw }}" class="loadmore-btn btn btn-default">
 			Show previous
 		</a>
 	</div>
