@@ -16,6 +16,7 @@ class ESBaseContext extends MinkContext implements KernelAwareContext
 	public function setKernel(KernelInterface $kernel)
 	{
 		$this->kernel = $kernel;
+		$this->setMinkParameter('files_path', dirname($this->kernel->getRootDir()));
 	}
 
 	/**
@@ -59,5 +60,15 @@ class ESBaseContext extends MinkContext implements KernelAwareContext
 	public function iWaitForAjaxToFinish()
 	{
 		$this->getSession()->wait(10000, '(typeof(jQuery)=="undefined" || (0 === jQuery.active && 0 === jQuery(\':animated\').length))');
+	}
+
+	/**
+	 * Wait for AJAX to finish.
+	 *
+	 * @Given /^I wait for debug$/
+	 */
+	public function iWaitForDebug()
+	{
+		$this->getSession()->wait(1000000);
 	}
 } 
