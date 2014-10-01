@@ -8,6 +8,9 @@
 ```php
 // src/Acme/DemoBundle/Controller/ListController.php
 
+use ES\Bundle\BaseBundle\LoadMore\Adapter\DoctrineORMAdapter;
+use ES\Bundle\BaseBundle\LoadMore\LoadMore;
+
 public function listAction()
 {
 	$em    = $this->getDoctrine()->getManager();
@@ -35,14 +38,14 @@ public function listAction()
 #### In the view:
 
 You should separate your views.
-The main one which contains the layout of the list:
+The main one contains the layout of the list:
 
 ```django
 {# src/Acme/DemoBundle/Resources/views/List/list.html.twig #}
 <h1>My list</h1>
 
 <div id="loadmore-area">
-	{% include 'AcmeDemoBundle:MyList:loadmore_content.html.twig' %}
+	{% include 'AcmeDemoBundle:MyList:list_content.html.twig' %}
 </div>
 <script>
 	$(function (){
@@ -87,8 +90,7 @@ $loadMore->setIdField('id'); // Default value
 
 ### Reverse side (show previous)
 
-You may need to reverse the items' order, for example, to show previous (older) comments
-
+You may need to reverse the items' order, for example, to show previous (older) comments.
 In that case you can use the `reverse` options (both on JS and PHP) side and place your loadmore button on the top of the list.
 
 In your controller:
@@ -105,7 +107,7 @@ In your layout view:
 <h1>My list</h1>
 
 <div id="loadmore-area">
-	{% include 'AcmeDemoBundle:MyList:loadmore_content.html.twig' %}
+	{% include 'AcmeDemoBundle:MyList:list_content.html.twig' %}
 </div>
 <script>
 	$(function (){
@@ -120,6 +122,7 @@ In your layout view:
 In your partial view:
 
 ```django
+{# src/Acme/DemoBundle/Resources/views/List/list_content.html.twig #}
 {% if items.hasMore %}
 	<div class="loadmore-action">
 		<a href="{{ items.moreUri }}" class="loadmore-btn btn btn-default">
@@ -127,7 +130,6 @@ In your partial view:
 		</a>
 	</div>
 {% endif %}
-{# src/Acme/DemoBundle/Resources/views/List/list_content.html.twig #}
 <div class="items">
 	{% for item in items %}
 		<div class="item">
