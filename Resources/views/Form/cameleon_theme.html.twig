@@ -112,3 +112,24 @@
 		});
 	</script>
 {% endblock collection_widget %}
+
+{% block form_errors %}
+	{% spaceless %}
+		{% set global_errors = global_errors|default(false) %}
+		{% set style = style|default(bootstrap_get_style()) %}
+
+		{% if attr.style is defined and attr.style is not empty %}
+			{% set style = attr.style %}
+		{% endif %}
+
+		{% if errors|length > 0 %}
+			<div class="alert alert-danger">
+				<ul>
+					{% for error in errors %}
+						<li>{{ error.message }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+		{% endif %}
+	{% endspaceless %}
+{% endblock form_errors %}
