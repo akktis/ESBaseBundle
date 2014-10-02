@@ -8,6 +8,20 @@ staging:
         remember_me: Se souvenir
         submit: Continuer
 
+form:
+    collection:
+        add: Ajouter
+        delete: Retirer
+    select2:
+        placeholder: Entrer une valeur ...
+        no_matches: Aucun résultat
+        searching: Chargement ...
+    csrf:
+        invalid: Le formulaire a expiré. Veuillez le soumettre à nouveau.
+    gmap:
+        autocomplete:
+            placeholder: Saisissez une adresse ...
+
 contact:
     flashes:
         message:
@@ -26,7 +40,3 @@ contact:
             <p>%message%</p>
             --<br>
             %email%
-
-form:
-    csrf:
-        invalid: Le formulaire a expiré. Veuillez le soumettre à nouveau.

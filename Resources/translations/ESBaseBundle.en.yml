@@ -18,7 +18,6 @@ form:
     collection:
         add: Add
         delete: Remove
-
     gmap:
         autocomplete:
             placeholder: Enter a location ...
