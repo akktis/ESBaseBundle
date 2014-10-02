@@ -4,6 +4,7 @@ parameters:
     es_base.form.select2_doctrine.type.class: ES\Bundle\BaseBundle\Form\Type\Select2DoctrineType
     es_base.form.form.extension.class: ES\Bundle\BaseBundle\Form\Extension\FormTypeExtension
     es_base.form.collection.extension.class: ES\Bundle\BaseBundle\Form\Extension\CollectionTypeExtension
+    es_base.form.date.extension.class: ES\Bundle\BaseBundle\Form\Extension\DateTypeExtension
 services:
 
     es_base.form.form.extension:
@@ -15,6 +16,16 @@ services:
         class: %es_base.form.collection.extension.class%
         tags:
             - { name: form.type_extension, alias: collection }
+
+    es_base.form.date.extension:
+        class: %es_base.form.date.extension.class%
+        scope: request
+        arguments:
+            - @es_base.templating.assets.stack
+            - @templating.helper.assets
+            - @request
+        tags:
+            - { name: form.type_extension, alias: date }
 
     es_base.form.gmap_autocomplete.type:
         class: %es_base.form.gmap_autocomplete.type.class%

@@ -133,3 +133,17 @@
 		{% endif %}
 	{% endspaceless %}
 {% endblock form_errors %}
+
+{% block date_widget %}
+	{{ form_widget(form) }}
+	<script type="text/javascript">
+		$(function (){
+			$('#{{ id }}').datepicker({
+				autoclose: true,
+				language: "{{ app.request.locale }}",
+				format: '{{ format }}',
+				todayHighlight: true
+			});
+		});
+	</script>
+{% endblock %}
