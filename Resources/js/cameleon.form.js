@@ -95,21 +95,13 @@ Cameleon.form = {
 	summerNote: {
 		setup: function (id, options) {
 			function sendFile(file, editor, $editable) {
-				var $modal;
 				var data = new FormData();
 				for (var i in options.formData) {
 					data.append(i, options.formData[i]);
 				}
-				var fileFieldName = options.formData.form + '[' + options.formData.field + ']';
-				data.append(fileFieldName, file);
+				data.append(options.fieldName, file);
 
-				$modal = Cameleon.modal.launchModal({
-					content: '<p>' + options.imageUploadLoadingTxt + '</p>'
-				});
-				$
-				$modal.one('hidden.bs.modal', function () {
-					$editable.focus();
-				});
+				// TODO make loader
 				$.ajax({
 					data: data,
 					type: "POST",
@@ -119,7 +111,6 @@ Cameleon.form = {
 					contentType: false,
 					processData: false,
 					success: function (resp) {
-						$modal.modal('hide');
 						editor.restoreRange($editable);
 						editor.insertImage($editable, resp.file.url);
 					}
@@ -129,7 +120,11 @@ Cameleon.form = {
 			}
 
 			var options = $.extend({
-				height: 300
+				fieldName: 'file[file][file]',
+				height: 300,
+				imageUploadUrl: null,
+				formData: [],
+				imageUploadLoadingTxt: 'Uploading ...'
 			}, options);
 			if (options.imageUploadUrl) {
 				options.onImageUpload =
