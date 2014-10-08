@@ -15,7 +15,6 @@ services:
             - @translator
 
     es_base.twig.extension.base:
-        public: false
         class: %es_base.twig.extension.base.class%
         arguments:
             - @service_container
