@@ -154,6 +154,10 @@ class Configuration implements ConfigurationInterface
 						->end()
 					->end()
 				->end()
+				->arrayNode('object_mapping')
+					->prototype('scalar')
+					->end()
+				->end()
 			->end()
 		;
 

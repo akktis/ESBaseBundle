@@ -75,6 +75,8 @@ class ESBaseExtension extends Extension implements PrependExtensionInterface
 		}
 
 		$container->setParameter('es_base.templating.bootstrap.use_cdn', $config['templating']['bootstrap']['use_cdn']);
+
+		$container->setParameter('es_base.object_mapping', $config['object_mapping']);
 	}
 
 	private function configureTwigBundle(ContainerBuilder $container, array $config)

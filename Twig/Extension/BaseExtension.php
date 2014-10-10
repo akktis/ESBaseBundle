@@ -6,6 +6,7 @@
 namespace ES\Bundle\BaseBundle\Twig\Extension;
 
 use ES\Bundle\BaseBundle\Assetic\AssetsStack;
+use ES\Bundle\BaseBundle\Mapper\ObjectMapper;
 use ES\Bundle\BaseBundle\Translation\FallbackTranslatorInterface;
 use IntlDateFormatter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -22,13 +23,19 @@ class BaseExtension extends \Twig_Extension
 	 */
 	private $fallbackTranslator;
 
+	/**
+	 * @var ObjectMapper
+	 */
+	private $objectMapper;
+
 	private $cameleonGlobals;
 
-	public function __construct(ContainerInterface $container, AssetsStack $assetsStack, FallbackTranslatorInterface $fallbackTranslator, array $cameleonGlobals)
+	public function __construct(ContainerInterface $container, AssetsStack $assetsStack, FallbackTranslatorInterface $fallbackTranslator, ObjectMapper $objectMapper, array $cameleonGlobals)
 	{
 		$this->container          = $container;
 		$this->assetsStack        = $assetsStack;
 		$this->fallbackTranslator = $fallbackTranslator;
+		$this->objectMapper       = $objectMapper;
 		$this->cameleonGlobals    = $cameleonGlobals;
 	}
 
@@ -71,6 +78,7 @@ class BaseExtension extends \Twig_Extension
 			new \Twig_SimpleFunction('get_js_includes', array($this->assetsStack, 'getJavascriptIncludes')),
 			new \Twig_SimpleFunction('get_css_includes', array($this->assetsStack, 'getCSSIncludes')),
 			new \Twig_SimpleFunction('now', array($this, 'now')),
+			new \Twig_SimpleFunction('get_object_key', array($this->objectMapper, 'getObjectKey')),
 		);
 	}
 
