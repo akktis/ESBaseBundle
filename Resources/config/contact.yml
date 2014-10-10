@@ -1,6 +1,5 @@
 parameters:
     es_base.form.contact.type.class: ES\Bundle\BaseBundle\Form\Type\ContactFormType
-    es_base.doctrine.listener.contact.class: ES\Bundle\BaseBundle\Doctrine\ContactListener
 
 services:
     es_base.form.contact.type:
@@ -11,8 +10,7 @@ services:
             - { name: form.type, alias: es_contact_form }
 
     es_base.doctrine.listener.contact:
-        public: false
-        class: %es_base.doctrine.listener.contact.class%
+        parent: es_base.doctrine.listener.concrete_class
         arguments:
             - %es_base.model.contact_message.class%
             - %es_base.model.contact_message.table%

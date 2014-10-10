@@ -3,6 +3,7 @@ parameters:
     es_base.templating.assets.stack.class: ES\Bundle\BaseBundle\Assetic\AssetsStack
     es_base.twig.extension.base.class: ES\Bundle\BaseBundle\Twig\Extension\BaseExtension
     es_base.object_mapper.class: ES\Bundle\BaseBundle\Mapper\ObjectMapper
+    es_base.doctrine.listener.concrete_class.class: ES\Bundle\BaseBundle\Doctrine\Mapping\ConcreteClassListener
 
 services:
     es_base.templating.assets.stack:
@@ -36,3 +37,8 @@ services:
         class: %es_base.object_mapper.class%
         arguments:
             - %es_base.object_mapping%
+
+    es_base.doctrine.listener.concrete_class:
+        abstract: true
+        public: false
+        class: %es_base.doctrine.listener.concrete_class.class%
