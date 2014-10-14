@@ -14,7 +14,7 @@ es_cameleon:
 You can either set a single password or define a set of users as below:
 
 ``` yaml
-es_cameleon:
+es_base:
     staging:
         authtype: form
         users:
@@ -37,8 +37,8 @@ Import the routing configuration:
 ``` yaml
 # app/config/routing.yml
 
-es_cameleon_staging:
-    resource: "@ESCameleonBundle/Resources/config/routing/staging.yml"
+es_base_staging:
+    resource: "@ESBaseBundle/Resources/config/routing/staging.yml"
 ```
 
 You're done!
