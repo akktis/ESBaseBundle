@@ -5,7 +5,7 @@
 
 namespace ES\Bundle\BaseBundle\Twig\Extension;
 
-use ES\Bundle\BaseBundle\Assetic\AssetsStack;
+use ES\Bundle\BaseBundle\Assets\AssetsStack;
 use ES\Bundle\BaseBundle\Mapper\ObjectMapper;
 use ES\Bundle\BaseBundle\Translation\FallbackTranslatorInterface;
 use IntlDateFormatter;

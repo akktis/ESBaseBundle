@@ -1,22 +1,32 @@
 <?php
 
 
-namespace ES\Bundle\BaseBundle\Assetic;
+namespace ES\Bundle\BaseBundle\Assets;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class AssetsStack extends ContainerAware
 {
-	private $javascriptIncludes = array();
+	private $javascriptIncludes = [];
 
-	private $javascriptCode = array();
+	private $javascriptCode = [];
 
-	private $cssIncludes = array();
+	private $cssIncludes = [];
+
+	/**
+	 * @var AssetsExtensionInterface[]
+	 */
+	private $extensions = [];
 
 	function __construct(ContainerInterface $container)
 	{
 		$this->setContainer($container);
+	}
+
+	public function addExtension($extensions)
+	{
+		$this->extensions[] = $extensions;
 	}
 
 	public function appendJavascriptInclude($src, $key = null)
@@ -61,16 +71,34 @@ class AssetsStack extends ContainerAware
 
 	public function getCSSIncludes()
 	{
+		foreach ($this->extensions as $extension) {
+			foreach ($extension->getCSSIncludes() as $src) {
+				$this->appendCSSInclude($src);
+			}
+		}
+
 		return $this->cssIncludes;
 	}
 
 	public function getJavascriptIncludes()
 	{
+		foreach ($this->extensions as $extension) {
+			foreach ($extension->getJavascriptIncludes() as $src) {
+				$this->appendJavascriptInclude($src);
+			}
+		}
+
 		return $this->javascriptIncludes;
 	}
 
 	public function getJavascriptCode()
 	{
+		foreach ($this->extensions as $extension) {
+			foreach ($extension->getJavascriptCode() as $code) {
+				$this->appendJavascriptCode($code);
+			}
+		}
+
 		return preg_replace('#</script>\s*<script>#ius', '', implode("\n", $this->javascriptCode));
 	}
 } 

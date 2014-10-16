@@ -3,7 +3,7 @@
 namespace ES\Bundle\BaseBundle\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use ES\Bundle\BaseBundle\Assetic\AssetsStack;
+use ES\Bundle\BaseBundle\Assets\AssetsStack;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;

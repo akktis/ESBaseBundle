@@ -45,7 +45,7 @@ class Select2TypeTest extends TypeTestCase
 	private function createSelect2Type()
 	{
 		$container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
-		$assetStack   = $this->getMock('ES\Bundle\BaseBundle\Assetic\AssetsStack', null, array($container));
+		$assetStack   = $this->getMock('ES\Bundle\BaseBundle\Assets\AssetsStack', null, array($container));
 		$assetsHelper = $this->getMock('Symfony\Component\Templating\Asset\PackageInterface');
 
 		$translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');

@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-namespace ES\Bundle\BaseBundle\Assetic\Filter;
+namespace ES\Bundle\BaseBundle\Assets\Filter;
 
 use Assetic\Asset\AssetInterface;
 use Assetic\Exception\FilterException;

@@ -1,6 +1,6 @@
 parameters:
     es_base.model_manager_name: null
-    es_base.templating.assets.stack.class: ES\Bundle\BaseBundle\Assetic\AssetsStack
+    es_base.templating.assets.stack.class: ES\Bundle\BaseBundle\Assets\AssetsStack
     es_base.twig.extension.base.class: ES\Bundle\BaseBundle\Twig\Extension\BaseExtension
     es_base.object_mapper.class: ES\Bundle\BaseBundle\Mapper\ObjectMapper
     es_base.doctrine.listener.concrete_class.class: ES\Bundle\BaseBundle\Doctrine\Mapping\ConcreteClassListener
@@ -10,6 +10,7 @@ services:
         class: %es_base.templating.assets.stack.class%
         arguments:
             - @service_container
+            - @event_dispatcher
 
     es_base.translator_fallback:
         class: ES\Bundle\BaseBundle\Translation\FallbackTranslator

@@ -2,7 +2,7 @@
 
 namespace ES\Bundle\BaseBundle\Form\Extension;
 
-use ES\Bundle\BaseBundle\Assetic\AssetsStack;
+use ES\Bundle\BaseBundle\Assets\AssetsStack;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;

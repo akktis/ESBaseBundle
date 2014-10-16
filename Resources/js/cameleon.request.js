@@ -4,7 +4,15 @@ Cameleon.request = {
 	config: {
 		timeoutError: 'Server does not respond, please try again later',
 		serverError: 'An error has occurred, please try again later',
-		loginUrl: '/login'
+		loginUrl: null,
+		// Override me!
+		onForbidden: function (errorText, xhr) {
+			if (Cameleon.request.config.loginUrl) {
+				document.location.href = Cameleon.request.config.loginUrl;
+			} else {
+				alert(errorText);
+			}
+		}
 	},
 
 	setConfig: function (options) {
@@ -48,11 +56,7 @@ Cameleon.request = {
 					}
 					if (s === 400) {
 					} else if (s === 403) {
-						m.load(r.config.loginUrl, {
-							data: {
-								target_url: document.location.href
-							}
-						});
+						Cameleon.request.config.onForbidden.call(this, errorText, xhr);
 					} else if (type === 'error' && xhr.readyState > 0) {
 						m.alert(r.config.serverError);
 					} else if (type === 'timeout') {
