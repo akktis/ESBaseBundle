@@ -8,7 +8,7 @@ Cameleon.request = {
 		// Override me!
 		onForbidden: function (errorText, xhr) {
 			if (Cameleon.request.config.loginUrl) {
-				document.location.href = Cameleon.request.config.loginUrl;
+				document.location.href = Cameleon.request.config.loginUrl + '?r=' + document.location.href;
 			} else {
 				alert(errorText);
 			}
