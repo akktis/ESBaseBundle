@@ -158,6 +158,12 @@ class Configuration implements ConfigurationInterface
 					->prototype('scalar')
 					->end()
 				->end()
+				->arrayNode('auth')
+					->addDefaultsIfNotSet()
+					->children()
+						->scalarNode('login_route')->defaultValue('fos_user_registration_register')->end()
+					->end()
+				->end()
 			->end()
 		;
 

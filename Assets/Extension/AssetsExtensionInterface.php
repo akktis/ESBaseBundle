@@ -1,7 +1,7 @@
 <?php
 
 
-namespace ES\Bundle\BaseBundle\Assets;
+namespace ES\Bundle\BaseBundle\Assets\Extension;
 
 interface AssetsExtensionInterface
 {

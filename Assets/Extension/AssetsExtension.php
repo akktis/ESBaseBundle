@@ -1,9 +1,9 @@
 <?php
 
 
-namespace ES\Bundle\BaseBundle\Assets;
+namespace ES\Bundle\BaseBundle\Assets\Extension;
 
-class AssetsExtension implements AssetsExtensionInterface
+abstract class AssetsExtension implements AssetsExtensionInterface
 {
 	function getJavascriptIncludes()
 	{

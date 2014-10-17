@@ -4,6 +4,7 @@ parameters:
     es_base.twig.extension.base.class: ES\Bundle\BaseBundle\Twig\Extension\BaseExtension
     es_base.object_mapper.class: ES\Bundle\BaseBundle\Mapper\ObjectMapper
     es_base.doctrine.listener.concrete_class.class: ES\Bundle\BaseBundle\Doctrine\Mapping\ConcreteClassListener
+    es_base.assets.extension.authentication.class: ES\Bundle\BaseBundle\Assets\Extension\AuthenticationExtension
 
 services:
     es_base.templating.assets.stack:
@@ -43,3 +44,11 @@ services:
         abstract: true
         public: false
         class: %es_base.doctrine.listener.concrete_class.class%
+
+    es_base.assets.extension.authentication:
+        class: %es_base.assets.extension.authentication.class%
+        arguments:
+            - @router
+            - @security.context
+        tags:
+            - { name: es_base.assets_extension }

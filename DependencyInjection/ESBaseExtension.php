@@ -75,8 +75,13 @@ class ESBaseExtension extends Extension implements PrependExtensionInterface
 		}
 
 		$container->setParameter('es_base.templating.bootstrap.use_cdn', $config['templating']['bootstrap']['use_cdn']);
-
 		$container->setParameter('es_base.object_mapping', $config['object_mapping']);
+
+		$bundles = $container->getParameter('kernel.bundles');
+		if (isset($bundles['FOSUserBundle'])) {
+			$definition = $container->getDefinition('es_base.assets.extension.authentication');
+			$definition->addArgument($config['auth']['login_route']);
+		}
 	}
 
 	private function configureTwigBundle(ContainerBuilder $container, array $config)
