@@ -5,14 +5,14 @@ Cameleon.request = {
 		timeoutError: 'Server does not respond, please try again later',
 		serverError: 'An error has occurred, please try again later',
 		loginUrl: null,
-		// Override me!
 		onForbidden: function (errorText, xhr) {
 			if (Cameleon.request.config.loginUrl) {
 				document.location.href = Cameleon.request.config.loginUrl + '?r=' + document.location.href;
 			} else {
 				alert(errorText);
 			}
-		}
+		},
+		loggedIn: false
 	},
 
 	setConfig: function (options) {
@@ -45,6 +45,11 @@ Cameleon.request = {
 			options._error = options.error;
 			delete options.error;
 		}
+
+		if (options.requiredLogin && !Cameleon.request.config.loggedIn) {
+			Cameleon.request.config.onForbidden.call(this);
+		}
+
 		return $.ajax(
 			$.extend({
 				error: function (xhr, type, errorText) {
@@ -56,7 +61,7 @@ Cameleon.request = {
 					}
 					if (s === 400) {
 					} else if (s === 403) {
-						Cameleon.request.config.onForbidden.call(this, errorText, xhr);
+						Cameleon.request.config.onForbidden.call(this);
 					} else if (type === 'error' && xhr.readyState > 0) {
 						m.alert(r.config.serverError);
 					} else if (type === 'timeout') {
