@@ -47,19 +47,16 @@ class BaseExtension extends \Twig_Extension
 	public function getFilters()
 	{
 		return array(
-			'dump'          => new \Twig_Filter_Function(array('ES\Bundle\BaseBundle\Util\Debug', 'dump')),
-			'ucfirst'       => new \Twig_Filter_Function('ucfirst'),
-			'floor'         => new \Twig_Filter_Function('floor'),
-			'ceil'          => new \Twig_Filter_Function('ceil'),
-			'urlize'        => new \Twig_Filter_Function(array('ES\Bundle\BaseBundle\Util\Url', 'urlize')),
-			'fix_scheme'    => new \Twig_Filter_Function(array('ES\Bundle\BaseBundle\Util\Url', 'fixScheme')),
-			'localizeddate' => new \Twig_Filter_Function(array(
-					$this,
-					'twig_localized_date_filter'
-				), array('needs_environment' => true)),
+			new \Twig_SimpleFilter('dump', array('ES\Bundle\BaseBundle\Util\Debug', 'dump')),
+			new \Twig_SimpleFilter('ucfirst', 'ucfirst'),
+			new \Twig_SimpleFilter('floor', 'floor'),
+			new \Twig_SimpleFilter('ceil', 'ceil'),
+			new \Twig_SimpleFilter('urlize', array('ES\Bundle\BaseBundle\Util\Url', 'urlize')),
+			new \Twig_SimpleFilter('fixScheme', array('ES\Bundle\BaseBundle\Util\Url', 'fixScheme')),
+			new \Twig_SimpleFilter('twig_localized_date_filter', array(
+					$this,'twig_localized_date_filter'), array('needs_environment' => true)),
 			new \Twig_SimpleFilter('transfallback', array($this, 'transFallback'), array('is_safe' => array('html'))),
-			new \Twig_SimpleFilter('transchoicefallback', array($this,
-				'transChoiceFallback'), array('is_safe' => array('html')))
+			new \Twig_SimpleFilter('transchoicefallback', array($this,'transChoiceFallback'), array('is_safe' => array('html')))
 		);
 	}
 

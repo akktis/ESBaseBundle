@@ -9,6 +9,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Templating\Asset\PackageInterface;
+use Symfony\Bundle\FrameworkBundle\Templating\Helper\AssetsHelper;
 
 class DateTypeExtension extends AbstractTypeExtension
 {
@@ -24,7 +25,7 @@ class DateTypeExtension extends AbstractTypeExtension
 
 	static private $assetsIncluded = false;
 
-	function __construct(AssetsStack $assetsStack, PackageInterface $assetsHelper, Request $request)
+	function __construct(AssetsStack $assetsStack, AssetsHelper $assetsHelper, Request $request)
 	{
 		$this->assetsStack  = $assetsStack;
 		$this->assetsHelper = $assetsHelper;
